@@ -132,11 +132,10 @@ function update(dt){
     if(hit(n)){
       s.names.splice(i,1);
       if(n.text===s.q[2]){
-        const before=stage();s.streak++;s.hits++;
+        s.streak++;s.hits++;
         s.score+=10+Math.min(s.streak,10)*2;
         flash("✓ "+n.text+" — "+(PLAYS[s.q[3]]||s.q[3]),"#8fe388");
         if(s.hits%4===0)s.level++;
-        if(stage()!==before)flash("Now entering "+DIFF[stage()].label+" mode!","#ffd166");
         nextQuote();
       }else loseLife("✗ It wasn’t "+n.text+"!");
     }else if(n.y>FLOOR){
@@ -199,7 +198,7 @@ function draw(){
   // HUD
   ctx.textAlign="left";ctx.font="bold 20px Georgia,serif";ctx.fillStyle="#f3e6c8";
   ctx.fillText("Score "+s.score,28,28);
-  ctx.textAlign="center";ctx.fillText(DIFF[stage()].label+" · Lv "+s.level,W/2,28);
+  ctx.textAlign="center";ctx.fillText("Level "+s.level,W/2,28);
   ctx.textAlign="right";ctx.fillStyle="#ff6b6b";ctx.fillText("♥ "+Math.max(0,s.lives),W-28,28);
   if(s.msg){ctx.globalAlpha=Math.min(1,s.msg.t);ctx.textAlign="center";ctx.font="bold 22px Georgia,serif";
     ctx.lineWidth=4;ctx.strokeStyle="#000";ctx.strokeText(s.msg.text,W/2,PANEL+30);ctx.fillStyle=s.msg.color;ctx.fillText(s.msg.text,W/2,PANEL+30);ctx.globalAlpha=1;}
