@@ -58,6 +58,7 @@ try{s.best=+localStorage.getItem('bardBest')||0}catch(e){}
 const keys={};
 const DIFF={easy:{label:"EASY",lives:10,speed:.65,desc:"Slower names · 10 lives"},normal:{label:"NORMAL",lives:5,speed:1,desc:"Normal speed · 5 lives"},hard:{label:"HARD",lives:2,speed:1.45,desc:"Faster names · 2 lives"}};
 const DKEYS=['easy','normal','hard'];
+const stage=()=>s.hits<5?'easy':s.hits<12?'normal':'hard';
 const PLAYS={"Romeu e Julieta":"Romeo and Juliet","Ricardo III":"Richard III","Júlio César":"Julius Caesar","O Mercador de Veneza":"The Merchant of Venice","Sonho de uma Noite de Verão":"A Midsummer Night’s Dream","A Tempestade":"The Tempest","Otelo":"Othello","Rei Lear":"King Lear"};
 const BTN=i=>({x:W/2-175,y:385+i*72,w:350,h:60});
 function drawMenu(){
@@ -68,23 +69,19 @@ function drawMenu(){
   ctx.fillText(s.mode==='over'?"Final score: "+s.score:"The Bard’s Game",W/2,152);
   if(s.best){ctx.fillStyle="#b5a584";ctx.fillText("Best: "+s.best,W/2,182);}
   ctx.fillStyle="#f3e6c8";ctx.font="17px Georgia,serif";
-  ["A quote appears at the top. Catch the character","who said it and dodge the wrong names.","Catching a wrong name, or letting the right one fall, costs a life.","Move with ← → (or A / D), or drag your finger/mouse."].forEach((l,i)=>ctx.fillText(l,W/2,235+i*26));
-  ctx.fillStyle="#ffd166";ctx.font="bold 20px Georgia,serif";ctx.fillText("Choose your difficulty",W/2,358);
-  DKEYS.forEach((k,i)=>{const b=BTN(i),d=DIFF[k],sel=s.diff===k;
-    ctx.fillStyle=sel?"#4a1620":"#24120f";ctx.strokeStyle=sel?"#ffd166":"#6b4a3a";ctx.lineWidth=sel?3:1.5;
-    ctx.beginPath();ctx.roundRect(b.x,b.y,b.w,b.h,10);ctx.fill();ctx.stroke();
-    ctx.fillStyle="#f3e6c8";ctx.font="bold 22px Georgia,serif";ctx.fillText((i+1)+" · "+d.label,W/2,b.y+23);
-    ctx.fillStyle="#b5a584";ctx.font="15px Georgia,serif";ctx.fillText(d.desc,W/2,b.y+44);});
-  ctx.fillStyle="#c9a24a";ctx.font="16px Georgia,serif";ctx.fillText("Tap a button, or press 1 / 2 / 3. Enter replays "+DIFF[s.diff].label+".",W/2,625);
+  ["A quote appears at the top. Catch the character","who said it and dodge the wrong names.","Catching a wrong name, or letting the right one fall, costs a life.","Move with ← → (or A / D), or drag your finger/mouse.","You start with 10 lives. The names fall faster as you score:","Easy → Normal → Hard."].forEach((l,i)=>ctx.fillText(l,W/2,235+i*26));
+  ctx.fillStyle="#4a1620";ctx.strokeStyle="#ffd166";ctx.lineWidth=3;
+  ctx.beginPath();ctx.roundRect(W/2-150,470,300,64,12);ctx.fill();ctx.stroke();
+  ctx.fillStyle="#ffd166";ctx.font="bold 28px Georgia,serif";ctx.fillText("PLAY",W/2,502);
+  ctx.fillStyle="#c9a24a";ctx.font="16px Georgia,serif";ctx.fillText("Tap anywhere or press Enter to start",W/2,565);
 }
 
 function nextQuote(){
   if(!s.bag.length){s.bag=Q.map((_,i)=>i).sort(()=>Math.random()-.5);}
-  s.q=Q[s.bag.pop()];
+  s.q=Q[s.bag.pop()];s.qAge=0;
 }
-function start(d){
-  if(d)s.diff=d;
-  Object.assign(s,{mode:'play',score:0,lives:DIFF[s.diff].lives,level:1,streak:0,hits:0,names:[],px:W/2,target:null,spawn:.3,msg:null});
+function start(){
+  Object.assign(s,{mode:'play',score:0,lives:10,level:1,streak:0,hits:0,names:[],px:W/2,target:null,spawn:.3,msg:null});
   nextQuote();
 }
 function flash(text,color){s.msg={text,color,t:1.6};}
@@ -92,7 +89,7 @@ function spawn(){
   const cur=s.q[2];
   const hasCorrect=s.names.some(n=>n.text===cur&&n.y<FLOOR-80);
   let text;
-  if(!hasCorrect||Math.random()<.22)text=cur;
+  if((!hasCorrect&&s.qAge>3)||Math.random()<.22)text=cur;
   else{do{text=POOL[Math.random()*POOL.length|0]}while(text===cur)}
   ctx.font="bold 22px Georgia,serif";
   const len=ctx.measureText(text).width+8;
@@ -101,7 +98,7 @@ function spawn(){
     x=30+Math.random()*(W-60);
     if(!s.names.some(n=>n.y<len+60&&Math.abs(n.x-x)<34))break;
   }
-  const v=(70+Math.random()*130+s.level*14)*DIFF[s.diff].speed;
+  const v=(70+Math.random()*130+s.level*14)*DIFF[stage()].speed;
   s.names.push({text,x,y:PANEL-len,len,v,c:COLORS[Math.random()*COLORS.length|0]});
 }
 function hit(n){
@@ -128,17 +125,18 @@ function update(dt){
     if(Math.abs(d)>3){s.px+=Math.sign(d)*Math.min(Math.abs(d),sp*1.4*dt);s.moving=true;}
   }
   s.px=Math.max(30,Math.min(W-30,s.px));
-  s.spawn-=dt;
+  s.spawn-=dt;s.qAge+=dt;
   if(s.spawn<=0){spawn();s.spawn=Math.max(.4,1.0-s.level*.07)*(.7+Math.random()*.6);}
   for(let i=s.names.length-1;i>=0&&s.mode==='play';i--){
     const n=s.names[i];n.y+=n.v*dt;
     if(hit(n)){
       s.names.splice(i,1);
       if(n.text===s.q[2]){
-        s.streak++;s.hits++;
+        const before=stage();s.streak++;s.hits++;
         s.score+=10+Math.min(s.streak,10)*2;
         flash("✓ "+n.text+" — "+(PLAYS[s.q[3]]||s.q[3]),"#8fe388");
         if(s.hits%4===0)s.level++;
+        if(stage()!==before)flash("Now entering "+DIFF[stage()].label+" mode!","#ffd166");
         nextQuote();
       }else loseLife("✗ It wasn’t "+n.text+"!");
     }else if(n.y>FLOOR){
@@ -201,7 +199,7 @@ function draw(){
   // HUD
   ctx.textAlign="left";ctx.font="bold 20px Georgia,serif";ctx.fillStyle="#f3e6c8";
   ctx.fillText("Score "+s.score,28,28);
-  ctx.textAlign="center";ctx.fillText("Level "+s.level,W/2,28);
+  ctx.textAlign="center";ctx.fillText(DIFF[stage()].label+" · Lv "+s.level,W/2,28);
   ctx.textAlign="right";ctx.fillStyle="#ff6b6b";ctx.fillText("♥ "+Math.max(0,s.lives),W-28,28);
   if(s.msg){ctx.globalAlpha=Math.min(1,s.msg.t);ctx.textAlign="center";ctx.font="bold 22px Georgia,serif";
     ctx.lineWidth=4;ctx.strokeStyle="#000";ctx.strokeText(s.msg.text,W/2,PANEL+30);ctx.fillStyle=s.msg.color;ctx.fillText(s.msg.text,W/2,PANEL+30);ctx.globalAlpha=1;}
@@ -227,17 +225,12 @@ requestAnimationFrame(loop);
 addEventListener('keydown',e=>{
   keys[e.key]=true;
   if(["ArrowLeft","ArrowRight"," "].includes(e.key))e.preventDefault();
-  if(s.mode!=='play'){
-    if(e.key==='1')start('easy');else if(e.key==='2')start('normal');else if(e.key==='3')start('hard');
-    else if(e.key==='Enter'||e.key===' ')start();
-    else if(e.key==='ArrowLeft'||e.key==='ArrowUp')s.diff=DKEYS[Math.max(0,DKEYS.indexOf(s.diff)-1)];
-    else if(e.key==='ArrowRight'||e.key==='ArrowDown')s.diff=DKEYS[Math.min(2,DKEYS.indexOf(s.diff)+1)];
-  }
+  if(s.mode!=='play'&&(e.key==='Enter'||e.key===' '))start();
 });
 addEventListener('keyup',e=>{keys[e.key]=false});
 function setTarget(e){const r=cv.getBoundingClientRect();s.target=(e.clientX-r.left)/r.width*W;}
 cv.addEventListener('pointerdown',e=>{
-  if(s.mode!=='play'){const r=cv.getBoundingClientRect(),x=(e.clientX-r.left)/r.width*W,y=(e.clientY-r.top)/r.height*H;DKEYS.forEach((k,i)=>{const b=BTN(i);if(x>=b.x&&x<=b.x+b.w&&y>=b.y&&y<=b.y+b.h)start(k);});return;}
+  if(s.mode!=='play'){start();return;}
   cv.setPointerCapture(e.pointerId);setTarget(e);
 });
 cv.addEventListener('pointermove',e=>{if(e.buttons||e.pointerType==='touch')setTarget(e);});

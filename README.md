@@ -8,7 +8,7 @@ A fast-paced browser game about Shakespeare. A famous quote appears at the top o
 
 ## How to play
 
-1. Pick a difficulty on the title screen.
+1. Tap **Play** (or press `Enter`). You start with **10 lives**.
 2. Read the quote at the top of the screen.
 3. Catch the name of the character who said it before it hits the floor.
 4. Avoid all the other names. They fall vertically, at different speeds.
@@ -20,13 +20,17 @@ You lose a life when you:
 
 When your lives run out, the curtain falls. Your best score is saved in your browser.
 
-### Difficulty levels
+### Automatic difficulty
 
-| Level  | Fall speed | Starting lives |
-| ------ | ---------- | -------------- |
-| Easy   | Slower     | 10             |
-| Normal | Standard   | 5              |
-| Hard   | Faster     | 2              |
+There is no difficulty menu. The game starts gentle and speeds up on its own as you catch the right characters:
+
+| Stage  | Reached after        | Fall speed |
+| ------ | -------------------- | ---------- |
+| Easy   | start                | Slower     |
+| Normal | 5 correct catches    | Standard   |
+| Hard   | 12 correct catches   | Faster     |
+
+Your lives are not reset when the stage changes.
 
 ### Scoring
 
@@ -39,8 +43,7 @@ When your lives run out, the curtain falls. Your best score is saved in your bro
 | Action                       | Keyboard                    | Mouse / Touch           |
 | ---------------------------- | --------------------------- | ----------------------- |
 | Move                         | `←` `→` or `A` `D`          | Click/tap and drag      |
-| Choose difficulty            | `1` `2` `3`, or arrows + `Enter` | Tap a button       |
-| Start / replay               | `Enter` or `Space`          | Tap a difficulty button |
+| Start / replay               | `Enter` or `Space`          | Tap anywhere on the title screen |
 
 The game works on desktop and mobile browsers.
 
@@ -48,7 +51,7 @@ The game works on desktop and mobile browsers.
 
 - 29 quotes from *Hamlet*, *Macbeth*, *Romeo and Juliet*, *Julius Caesar*, *Richard III*, *The Merchant of Venice*, *A Midsummer Night’s Dream*, *The Tempest*, *Othello* and *King Lear*
 - 34 characters to catch (or avoid)
-- Three difficulty levels
+- Automatic difficulty ramp: Easy → Normal → Hard
 - Names that fall vertically at random speeds
 - Streak bonuses and a level system
 - Local best score (stored with `localStorage`)
@@ -97,7 +100,7 @@ Everything lives in `index.html`. Look for these pieces near the top of the scri
   ```
 
 - **`POOL`**: every character name that can fall. The `character` of each quote must also appear here, spelled exactly the same way.
-- **`DIFF`**: the difficulty settings (`lives` and `speed` multiplier). Tweak these to rebalance the game.
+- **`DIFF`** and **`stage()`**: the speed multiplier of each stage and the number of correct catches that trigger Normal (5) and Hard (12). Tweak these to rebalance the game.
 - **`PLAYS`**: maps stored play names to the display names shown after a correct catch. Play names that are not in this map are shown as written.
 
 ## Tech
