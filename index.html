@@ -15,7 +15,7 @@ canvas{height:100%;max-height:100vh;max-width:100%;aspect-ratio:3/4;touch-action
 <canvas id="c"></canvas>
 <script>
 const cv=document.getElementById('c'),ctx=cv.getContext('2d');
-const W=600,H=800,PANEL=120,FLOOR=H-PANEL,PY=FLOOR-8;
+const W=600,H=800,PANEL=140,FLOOR=H-12,PY=FLOOR-8;
 cv.width=W;cv.height=H;
 
 const Q=[
@@ -68,7 +68,7 @@ function drawMenu(){
   ctx.fillText(s.mode==='over'?"Final score: "+s.score:"The Bard’s Game",W/2,152);
   if(s.best){ctx.fillStyle="#b5a584";ctx.fillText("Best: "+s.best,W/2,182);}
   ctx.fillStyle="#f3e6c8";ctx.font="17px Georgia,serif";
-  ["A quote appears at the bottom. Catch the character","who said it and dodge the wrong names.","Catching a wrong name, or letting the right one fall, costs a life.","Move with ← → (or A / D), or drag your finger/mouse."].forEach((l,i)=>ctx.fillText(l,W/2,235+i*26));
+  ["A quote appears at the top. Catch the character","who said it and dodge the wrong names.","Catching a wrong name, or letting the right one fall, costs a life.","Move with ← → (or A / D), or drag your finger/mouse."].forEach((l,i)=>ctx.fillText(l,W/2,235+i*26));
   ctx.fillStyle="#ffd166";ctx.font="bold 20px Georgia,serif";ctx.fillText("Choose your difficulty",W/2,358);
   DKEYS.forEach((k,i)=>{const b=BTN(i),d=DIFF[k],sel=s.diff===k;
     ctx.fillStyle=sel?"#4a1620":"#24120f";ctx.strokeStyle=sel?"#ffd166":"#6b4a3a";ctx.lineWidth=sel?3:1.5;
@@ -102,7 +102,7 @@ function spawn(){
     if(!s.names.some(n=>n.y<len+60&&Math.abs(n.x-x)<34))break;
   }
   const v=(70+Math.random()*130+s.level*14)*DIFF[s.diff].speed;
-  s.names.push({text,x,y:-len,len,v,c:COLORS[Math.random()*COLORS.length|0]});
+  s.names.push({text,x,y:PANEL-len,len,v,c:COLORS[Math.random()*COLORS.length|0]});
 }
 function hit(n){
   const px0=s.px-28,px1=s.px+28,py0=PY-98,py1=PY;
@@ -188,7 +188,7 @@ function draw(){
   ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
   ctx.fillStyle="#4a1620";ctx.fillRect(0,0,14,H);ctx.fillRect(W-14,0,14,H);
   ctx.fillStyle="#3a1018";ctx.fillRect(14,0,6,H);ctx.fillRect(W-20,0,6,H);
-  ctx.fillStyle="#3b2418";ctx.fillRect(0,FLOOR-8,W,8);
+  ctx.fillStyle="#3b2418";ctx.fillRect(0,FLOOR-4,W,16);
   // names
   ctx.textBaseline="middle";ctx.textAlign="left";ctx.font="bold 22px Georgia,serif";
   for(const n of s.names){
@@ -197,22 +197,21 @@ function draw(){
     ctx.fillStyle=n.c;ctx.fillText(n.text,4,0);ctx.restore();
   }
   if(s.mode!=='menu')bard(s.px,PY,s.t,s.moving);
+  ctx.fillStyle="#0d0709";ctx.fillRect(0,0,W,PANEL);ctx.fillStyle="#c9a24a";ctx.fillRect(0,PANEL-3,W,3);
   // HUD
   ctx.textAlign="left";ctx.font="bold 20px Georgia,serif";ctx.fillStyle="#f3e6c8";
   ctx.fillText("Score "+s.score,28,28);
   ctx.textAlign="center";ctx.fillText("Level "+s.level,W/2,28);
   ctx.textAlign="right";ctx.fillStyle="#ff6b6b";ctx.fillText("♥ "+Math.max(0,s.lives),W-28,28);
   if(s.msg){ctx.globalAlpha=Math.min(1,s.msg.t);ctx.textAlign="center";ctx.font="bold 22px Georgia,serif";
-    ctx.lineWidth=4;ctx.strokeStyle="#000";ctx.strokeText(s.msg.text,W/2,64);ctx.fillStyle=s.msg.color;ctx.fillText(s.msg.text,W/2,64);ctx.globalAlpha=1;}
+    ctx.lineWidth=4;ctx.strokeStyle="#000";ctx.strokeText(s.msg.text,W/2,PANEL+30);ctx.fillStyle=s.msg.color;ctx.fillText(s.msg.text,W/2,PANEL+30);ctx.globalAlpha=1;}
   // quote panel
-  ctx.fillStyle="#0d0709";ctx.fillRect(0,FLOOR,W,PANEL);
-  ctx.fillStyle="#c9a24a";ctx.fillRect(0,FLOOR,W,3);
   if(s.q&&s.mode==='play'){
     ctx.textAlign="center";ctx.fillStyle="#f3e6c8";ctx.font="italic 21px Georgia,serif";
     const lines=wrap("“"+s.q[0]+"”",W-50);
-    const y0=FLOOR+26;lines.forEach((l,i)=>ctx.fillText(l,W/2,y0+i*25));
+    const y0=62;lines.forEach((l,i)=>ctx.fillText(l,W/2,y0+i*25));
     ctx.font="14px Georgia,serif";ctx.fillStyle="#c9a24a";
-    ctx.fillText("Who said this? Catch the right character!",W/2,FLOOR+PANEL-12);
+    ctx.fillText("Who said this? Catch the right character!",W/2,PANEL-14);
   }
   if(s.mode!=='play'){
     drawMenu();

@@ -1,6 +1,6 @@
 # 🎭 Who Said It? — The Bard’s Game
 
-A fast-paced browser game about Shakespeare. A famous quote appears at the bottom of the screen while the names of Shakespearean characters rain down from above. Steer a tiny Shakespeare left and right, **catch the character who said the line**, and **dodge everyone else**.
+A fast-paced browser game about Shakespeare. A famous quote appears at the top of the screen while the names of Shakespearean characters rain down from above. Steer a tiny Shakespeare left and right, **catch the character who said the line**, and **dodge everyone else**.
 
 **▶ Play it now: [andguerreiro.github.io/bardsgame](https://andguerreiro.github.io/bardsgame)**
 
@@ -9,7 +9,7 @@ A fast-paced browser game about Shakespeare. A famous quote appears at the botto
 ## How to play
 
 1. Pick a difficulty on the title screen.
-2. Read the quote at the bottom of the screen.
+2. Read the quote at the top of the screen.
 3. Catch the name of the character who said it before it hits the floor.
 4. Avoid all the other names. They fall vertically, at different speeds.
 
