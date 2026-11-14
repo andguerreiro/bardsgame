@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Who Said It? — The Bard’s Game</title>
+<style>
+:root{--bg:#120a0e;--fg:#f3e6c8;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html,body{height:100%;margin:0;background:var(--bg);color:var(--fg);color-scheme:dark;font-family:Georgia,"Times New Roman",serif}
+body{display:flex;align-items:center;justify-content:center;overflow:hidden}
+canvas{height:100%;max-height:100vh;max-width:100%;aspect-ratio:3/4;touch-action:none;display:block;background:#1b0f14}
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<script>
+const cv=document.getElementById('c'),ctx=cv.getContext('2d');
+const W=600,H=800,PANEL=120,FLOOR=H-PANEL,PY=FLOOR-8;
+cv.width=W;cv.height=H;
+
+const Q=[
+["To be, or not to be, that is the question.","Ser ou não ser, eis a questão.","Hamlet","Hamlet"],
+["Alas, poor Yorick! I knew him, Horatio.","Ai, pobre Yorick! Eu o conheci, Horácio.","Hamlet","Hamlet"],
+["Frailty, thy name is woman!","Fragilidade, teu nome é mulher!","Hamlet","Hamlet"],
+["Brevity is the soul of wit.","A brevidade é a alma da sagacidade.","Polonius","Hamlet"],
+["Lord, we know what we are, but know not what we may be.","Senhor, sabemos o que somos, mas não o que podemos ser.","Ophelia","Hamlet"],
+["The lady doth protest too much, methinks.","A dama protesta demais, parece-me.","Gertrude","Hamlet"],
+["Out, damned spot! Out, I say!","Fora, maldita mancha! Fora, eu digo!","Lady Macbeth","Macbeth"],
+["Is this a dagger which I see before me?","Será isto um punhal que vejo diante de mim?","Macbeth","Macbeth"],
+["Out, out, brief candle!","Apaga-te, apaga-te, breve vela!","Macbeth","Macbeth"],
+["O Romeo, Romeo! Wherefore art thou Romeo?","Ó Romeu, Romeu! Por que és tu Romeu?","Juliet","Romeu e Julieta"],
+["Parting is such sweet sorrow.","Despedir-se é uma doce tristeza.","Juliet","Romeu e Julieta"],
+["But soft, what light through yonder window breaks?","Mas silêncio, que luz rompe aquela janela?","Romeo","Romeu e Julieta"],
+["A horse! A horse! My kingdom for a horse!","Um cavalo! Um cavalo! Meu reino por um cavalo!","Richard III","Ricardo III"],
+["Friends, Romans, countrymen, lend me your ears.","Amigos, romanos, compatriotas, emprestai-me vossos ouvidos.","Antony","Júlio César"],
+["Cry “Havoc!” and let slip the dogs of war.","Gritai “Estragos!” e soltai os cães da guerra.","Antony","Júlio César"],
+["Et tu, Brute?","Até tu, Brutus?","Caesar","Júlio César"],
+["Cowards die many times before their deaths.","Os covardes morrem muitas vezes antes da morte.","Caesar","Júlio César"],
+["Men at some time are masters of their fates.","Os homens, às vezes, são senhores de seus destinos.","Cassius","Júlio César"],
+["If you prick us, do we not bleed?","Se nos picais, não sangramos?","Shylock","O Mercador de Veneza"],
+["Lord, what fools these mortals be!","Senhor, que tolos são estes mortais!","Puck","Sonho de uma Noite de Verão"],
+["The course of true love never did run smooth.","O curso do verdadeiro amor nunca foi tranquilo.","Lysander","Sonho de uma Noite de Verão"],
+["Though she be but little, she is fierce.","Embora seja pequena, ela é feroz.","Helena","Sonho de uma Noite de Verão"],
+["Our revels now are ended.","Nossos festejos agora terminaram.","Prospero","A Tempestade"],
+["We are such stuff as dreams are made on.","Somos feitos da matéria de que os sonhos são feitos.","Prospero","A Tempestade"],
+["Hell is empty and all the devils are here.","O inferno está vazio e todos os demônios estão aqui.","Ariel","A Tempestade"],
+["O brave new world, that has such people in’t!","Ó admirável mundo novo, que tem tal gente!","Miranda","A Tempestade"],
+["O, beware, my lord, of jealousy!","Ó, meu senhor, cuidado com o ciúme!","Iago","Otelo"],
+["I will wear my heart upon my sleeve.","Usarei meu coração na manga.","Iago","Otelo"],
+["Reputation, reputation, reputation!","Reputação, reputação, reputação!","Cassio","Otelo"],
+["How sharper than a serpent’s tooth it is to have a thankless child!","Mais afiado que o dente da serpente é ter um filho ingrato!","Lear","Rei Lear"]
+];
+const POOL=["Hamlet","Ophelia","Polonius","Gertrude","Macbeth","Lady Macbeth","Macduff","Romeo","Juliet","Mercutio","Puck","Oberon","Titania","Lysander","Helena","Prospero","Ariel","Miranda","Iago","Othello","Cassio","Lear","Cordelia","Shylock","Portia","Caesar","Brutus","Antony","Cassius","Richard III","Falstaff","Malvolio","Viola","Bottom"];
+const COLORS=["#ffd166","#9ad1ff","#ff9aa8","#b9f27c","#d7a8ff","#ffb36b","#7ff0d4"];
+
+let s={mode:'menu',score:0,lives:3,level:1,streak:0,hits:0,names:[],px:W/2,target:null,q:null,bag:[],spawn:0,msg:null,t:0,best:0,moving:false,diff:'normal'};
+try{s.best=+localStorage.getItem('bardBest')||0}catch(e){}
+const keys={};
+const DIFF={easy:{label:"EASY",lives:10,speed:.65,desc:"Slower names · 10 lives"},normal:{label:"NORMAL",lives:5,speed:1,desc:"Normal speed · 5 lives"},hard:{label:"HARD",lives:2,speed:1.45,desc:"Faster names · 2 lives"}};
+const DKEYS=['easy','normal','hard'];
+const PLAYS={"Romeu e Julieta":"Romeo and Juliet","Ricardo III":"Richard III","Júlio César":"Julius Caesar","O Mercador de Veneza":"The Merchant of Venice","Sonho de uma Noite de Verão":"A Midsummer Night’s Dream","A Tempestade":"The Tempest","Otelo":"Othello","Rei Lear":"King Lear"};
+const BTN=i=>({x:W/2-175,y:385+i*72,w:350,h:60});
+function drawMenu(){
+  ctx.fillStyle="rgba(10,5,7,.86)";ctx.fillRect(0,0,W,FLOOR);
+  ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillStyle="#f3e6c8";
+  ctx.font="bold 44px Georgia,serif";ctx.fillText(s.mode==='over'?"Curtain Call":"Who Said It?",W/2,110);
+  ctx.font="italic 20px Georgia,serif";ctx.fillStyle="#c9a24a";
+  ctx.fillText(s.mode==='over'?"Final score: "+s.score:"The Bard’s Game",W/2,152);
+  if(s.best){ctx.fillStyle="#b5a584";ctx.fillText("Best: "+s.best,W/2,182);}
+  ctx.fillStyle="#f3e6c8";ctx.font="17px Georgia,serif";
+  ["A quote appears at the bottom. Catch the character","who said it and dodge the wrong names.","Catching a wrong name, or letting the right one fall, costs a life.","Move with ← → (or A / D), or drag your finger/mouse."].forEach((l,i)=>ctx.fillText(l,W/2,235+i*26));
+  ctx.fillStyle="#ffd166";ctx.font="bold 20px Georgia,serif";ctx.fillText("Choose your difficulty",W/2,358);
+  DKEYS.forEach((k,i)=>{const b=BTN(i),d=DIFF[k],sel=s.diff===k;
+    ctx.fillStyle=sel?"#4a1620":"#24120f";ctx.strokeStyle=sel?"#ffd166":"#6b4a3a";ctx.lineWidth=sel?3:1.5;
+    ctx.beginPath();ctx.roundRect(b.x,b.y,b.w,b.h,10);ctx.fill();ctx.stroke();
+    ctx.fillStyle="#f3e6c8";ctx.font="bold 22px Georgia,serif";ctx.fillText((i+1)+" · "+d.label,W/2,b.y+23);
+    ctx.fillStyle="#b5a584";ctx.font="15px Georgia,serif";ctx.fillText(d.desc,W/2,b.y+44);});
+  ctx.fillStyle="#c9a24a";ctx.font="16px Georgia,serif";ctx.fillText("Tap a button, or press 1 / 2 / 3. Enter replays "+DIFF[s.diff].label+".",W/2,625);
+}
+
+function nextQuote(){
+  if(!s.bag.length){s.bag=Q.map((_,i)=>i).sort(()=>Math.random()-.5);}
+  s.q=Q[s.bag.pop()];
+}
+function start(d){
+  if(d)s.diff=d;
+  Object.assign(s,{mode:'play',score:0,lives:DIFF[s.diff].lives,level:1,streak:0,hits:0,names:[],px:W/2,target:null,spawn:.3,msg:null});
+  nextQuote();
+}
+function flash(text,color){s.msg={text,color,t:1.6};}
+function spawn(){
+  const cur=s.q[2];
+  const hasCorrect=s.names.some(n=>n.text===cur&&n.y<FLOOR-80);
+  let text;
+  if(!hasCorrect||Math.random()<.22)text=cur;
+  else{do{text=POOL[Math.random()*POOL.length|0]}while(text===cur)}
+  ctx.font="bold 22px Georgia,serif";
+  const len=ctx.measureText(text).width+8;
+  let x=0;
+  for(let i=0;i<10;i++){
+    x=30+Math.random()*(W-60);
+    if(!s.names.some(n=>n.y<len+60&&Math.abs(n.x-x)<34))break;
+  }
+  const v=(70+Math.random()*130+s.level*14)*DIFF[s.diff].speed;
+  s.names.push({text,x,y:-len,len,v,c:COLORS[Math.random()*COLORS.length|0]});
+}
+function hit(n){
+  const px0=s.px-28,px1=s.px+28,py0=PY-98,py1=PY;
+  return n.x+14>px0&&n.x-14<px1&&n.y+n.len>py0&&n.y<py1;
+}
+function loseLife(txt){
+  s.lives--;s.streak=0;flash(txt,"#ff6b6b");
+  if(s.lives<=0){
+    s.mode='over';
+    if(s.score>s.best){s.best=s.score;try{localStorage.setItem('bardBest',s.best)}catch(e){}}
+  }
+}
+function update(dt){
+  s.t+=dt;
+  if(s.msg){s.msg.t-=dt;if(s.msg.t<=0)s.msg=null;}
+  if(s.mode!=='play')return;
+  const sp=420;
+  let dir=(keys.ArrowRight||keys.d||keys.D?1:0)-(keys.ArrowLeft||keys.a||keys.A?1:0);
+  s.moving=false;
+  if(dir){s.px+=dir*sp*dt;s.target=null;s.moving=true;}
+  else if(s.target!==null){
+    const d=s.target-s.px;
+    if(Math.abs(d)>3){s.px+=Math.sign(d)*Math.min(Math.abs(d),sp*1.4*dt);s.moving=true;}
+  }
+  s.px=Math.max(30,Math.min(W-30,s.px));
+  s.spawn-=dt;
+  if(s.spawn<=0){spawn();s.spawn=Math.max(.4,1.0-s.level*.07)*(.7+Math.random()*.6);}
+  for(let i=s.names.length-1;i>=0&&s.mode==='play';i--){
+    const n=s.names[i];n.y+=n.v*dt;
+    if(hit(n)){
+      s.names.splice(i,1);
+      if(n.text===s.q[2]){
+        s.streak++;s.hits++;
+        s.score+=10+Math.min(s.streak,10)*2;
+        flash("✓ "+n.text+" — "+(PLAYS[s.q[3]]||s.q[3]),"#8fe388");
+        if(s.hits%4===0)s.level++;
+        nextQuote();
+      }else loseLife("✗ It wasn’t "+n.text+"!");
+    }else if(n.y>FLOOR){
+      s.names.splice(i,1);
+      if(n.text===s.q[2])loseLife(n.text+" got away!");
+    }
+  }
+}
+function wrap(text,maxW){
+  const words=text.split(' '),lines=[];let line='';
+  for(const w of words){
+    const t=line?line+' '+w:w;
+    if(ctx.measureText(t).width>maxW&&line){lines.push(line);line=w}else line=t;
+  }
+  lines.push(line);return lines;
+}
+function bard(x,y,t,moving){
+  ctx.save();ctx.translate(x,y);
+  const b=moving?Math.sin(t*16)*4:0;
+  ctx.fillStyle="#2b1d1d";
+  ctx.fillRect(-17,-24,12,24+b*.3);ctx.fillRect(5,-24,12,24-b*.3);
+  ctx.fillStyle="#1a1212";ctx.fillRect(-20,-2+b*.3,18,4);ctx.fillRect(2,-2-b*.3,18,4);
+  ctx.fillStyle="#7a1f30";ctx.beginPath();ctx.roundRect(-25,-66,50,46,6);ctx.fill();
+  ctx.fillStyle="#e0b44c";for(let i=0;i<3;i++){ctx.beginPath();ctx.arc(0,-56+i*12,2.2,0,7);ctx.fill();}
+  ctx.fillStyle="#f6f0e0";ctx.beginPath();ctx.ellipse(0,-68,31,9,0,0,7);ctx.fill();
+  ctx.strokeStyle="#d9cfb4";ctx.lineWidth=1;
+  for(let i=-24;i<=24;i+=8){ctx.beginPath();ctx.moveTo(i,-74);ctx.lineTo(i*.9,-62);ctx.stroke();}
+  ctx.fillStyle="#4a3222";
+  ctx.beginPath();ctx.ellipse(-20,-86,7,13,0,0,7);ctx.fill();
+  ctx.beginPath();ctx.ellipse(20,-86,7,13,0,0,7);ctx.fill();
+  ctx.fillStyle="#f0c9a0";ctx.beginPath();ctx.arc(0,-88,21,0,7);ctx.fill();
+  ctx.fillStyle="#4a3222";ctx.beginPath();ctx.arc(0,-103,8,Math.PI*1.1,Math.PI*1.9);ctx.fill();
+  ctx.fillStyle="#222";
+  ctx.beginPath();ctx.arc(-8,-90,2.2,0,7);ctx.arc(8,-90,2.2,0,7);ctx.fill();
+  ctx.strokeStyle="#4a3222";ctx.lineWidth=2;
+  ctx.beginPath();ctx.moveTo(-12,-96);ctx.lineTo(-4,-95);ctx.moveTo(12,-96);ctx.lineTo(4,-95);ctx.stroke();
+  ctx.strokeStyle="#d9a982";ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(0,-90);ctx.lineTo(-2,-84);ctx.lineTo(1,-83);ctx.stroke();
+  ctx.fillStyle="#4a3222";
+  ctx.beginPath();ctx.moveTo(-12,-80);ctx.quadraticCurveTo(0,-86,12,-80);ctx.quadraticCurveTo(0,-78,-12,-80);ctx.fill();
+  ctx.beginPath();ctx.moveTo(-5,-72);ctx.lineTo(5,-72);ctx.lineTo(0,-62);ctx.fill();
+  ctx.strokeStyle="#8a4a3a";ctx.lineWidth=1.5;ctx.beginPath();ctx.arc(0,-75,4,.2,Math.PI-.2);ctx.stroke();
+  ctx.fillStyle="#f2c94c";ctx.beginPath();ctx.arc(-21,-80,2.6,0,7);ctx.fill();
+  ctx.restore();
+}
+function draw(){
+  const g=ctx.createLinearGradient(0,0,0,H);g.addColorStop(0,"#1b0f14");g.addColorStop(1,"#2a1519");
+  ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+  ctx.fillStyle="#4a1620";ctx.fillRect(0,0,14,H);ctx.fillRect(W-14,0,14,H);
+  ctx.fillStyle="#3a1018";ctx.fillRect(14,0,6,H);ctx.fillRect(W-20,0,6,H);
+  ctx.fillStyle="#3b2418";ctx.fillRect(0,FLOOR-8,W,8);
+  // names
+  ctx.textBaseline="middle";ctx.textAlign="left";ctx.font="bold 22px Georgia,serif";
+  for(const n of s.names){
+    ctx.save();ctx.translate(n.x,n.y);ctx.rotate(Math.PI/2);
+    ctx.lineWidth=4;ctx.strokeStyle="#000";ctx.strokeText(n.text,4,0);
+    ctx.fillStyle=n.c;ctx.fillText(n.text,4,0);ctx.restore();
+  }
+  if(s.mode!=='menu')bard(s.px,PY,s.t,s.moving);
+  // HUD
+  ctx.textAlign="left";ctx.font="bold 20px Georgia,serif";ctx.fillStyle="#f3e6c8";
+  ctx.fillText("Score "+s.score,28,28);
+  ctx.textAlign="center";ctx.fillText("Level "+s.level,W/2,28);
+  ctx.textAlign="right";ctx.fillStyle="#ff6b6b";ctx.fillText("♥ "+Math.max(0,s.lives),W-28,28);
+  if(s.msg){ctx.globalAlpha=Math.min(1,s.msg.t);ctx.textAlign="center";ctx.font="bold 22px Georgia,serif";
+    ctx.lineWidth=4;ctx.strokeStyle="#000";ctx.strokeText(s.msg.text,W/2,64);ctx.fillStyle=s.msg.color;ctx.fillText(s.msg.text,W/2,64);ctx.globalAlpha=1;}
+  // quote panel
+  ctx.fillStyle="#0d0709";ctx.fillRect(0,FLOOR,W,PANEL);
+  ctx.fillStyle="#c9a24a";ctx.fillRect(0,FLOOR,W,3);
+  if(s.q&&s.mode==='play'){
+    ctx.textAlign="center";ctx.fillStyle="#f3e6c8";ctx.font="italic 21px Georgia,serif";
+    const lines=wrap("“"+s.q[0]+"”",W-50);
+    const y0=FLOOR+26;lines.forEach((l,i)=>ctx.fillText(l,W/2,y0+i*25));
+    ctx.font="14px Georgia,serif";ctx.fillStyle="#c9a24a";
+    ctx.fillText("Who said this? Catch the right character!",W/2,FLOOR+PANEL-12);
+  }
+  if(s.mode!=='play'){
+    drawMenu();
+  }
+}
+let last=performance.now();
+function loop(now){
+  const dt=Math.min(.05,(now-last)/1000);last=now;
+  update(dt);draw();requestAnimationFrame(loop);
+}
+requestAnimationFrame(loop);
+
+addEventListener('keydown',e=>{
+  keys[e.key]=true;
+  if(["ArrowLeft","ArrowRight"," "].includes(e.key))e.preventDefault();
+  if(s.mode!=='play'){
+    if(e.key==='1')start('easy');else if(e.key==='2')start('normal');else if(e.key==='3')start('hard');
+    else if(e.key==='Enter'||e.key===' ')start();
+    else if(e.key==='ArrowLeft'||e.key==='ArrowUp')s.diff=DKEYS[Math.max(0,DKEYS.indexOf(s.diff)-1)];
+    else if(e.key==='ArrowRight'||e.key==='ArrowDown')s.diff=DKEYS[Math.min(2,DKEYS.indexOf(s.diff)+1)];
+  }
+});
+addEventListener('keyup',e=>{keys[e.key]=false});
+function setTarget(e){const r=cv.getBoundingClientRect();s.target=(e.clientX-r.left)/r.width*W;}
+cv.addEventListener('pointerdown',e=>{
+  if(s.mode!=='play'){const r=cv.getBoundingClientRect(),x=(e.clientX-r.left)/r.width*W,y=(e.clientY-r.top)/r.height*H;DKEYS.forEach((k,i)=>{const b=BTN(i);if(x>=b.x&&x<=b.x+b.w&&y>=b.y&&y<=b.y+b.h)start(k);});return;}
+  cv.setPointerCapture(e.pointerId);setTarget(e);
+});
+cv.addEventListener('pointermove',e=>{if(e.buttons||e.pointerType==='touch')setTarget(e);});
+</script>
+</body>
+</html>
