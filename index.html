@@ -69,7 +69,7 @@ function drawMenu(){
   ctx.fillText(s.mode==='over'?"Final score: "+s.score:"The Bard’s Game",W/2,152);
   if(s.best){ctx.fillStyle="#b5a584";ctx.fillText("Best: "+s.best,W/2,182);}
   ctx.fillStyle="#f3e6c8";ctx.font="17px Georgia,serif";
-  ["A quote appears at the top. Catch the character","who said it and dodge the wrong names.","Catching a wrong name, or letting the right one fall, costs a life.","Move with ← → (or A / D), or drag your finger/mouse.","You start with 10 lives. The names fall faster as you score:","Easy → Normal → Hard."].forEach((l,i)=>ctx.fillText(l,W/2,235+i*26));
+  ["A quote appears at the top. Catch the character","who said it and dodge the wrong names.","Catching a wrong name, or letting the right one fall, costs a life.","Move with ← → (or A / D), or drag your finger/mouse.","You start with 10 lives."].forEach((l,i)=>ctx.fillText(l,W/2,235+i*26));
   ctx.fillStyle="#4a1620";ctx.strokeStyle="#ffd166";ctx.lineWidth=3;
   ctx.beginPath();ctx.roundRect(W/2-150,470,300,64,12);ctx.fill();ctx.stroke();
   ctx.fillStyle="#ffd166";ctx.font="bold 28px Georgia,serif";ctx.fillText("PLAY",W/2,502);
