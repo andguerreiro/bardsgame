@@ -49,8 +49,8 @@ The game works on desktop and mobile browsers.
 
 ## Features
 
-- 29 quotes from *Hamlet*, *Macbeth*, *Romeo and Juliet*, *Julius Caesar*, *Richard III*, *The Merchant of Venice*, *A Midsummer Night’s Dream*, *The Tempest*, *Othello* and *King Lear*
-- 34 characters to catch (or avoid)
+- 30 of Shakespeare’s most famous quotes, from *Hamlet*, *Macbeth*, *Romeo and Juliet*, *Julius Caesar*, *Richard III*, *The Merchant of Venice*, *As You Like It*, *Twelfth Night*, *A Midsummer Night’s Dream*, *The Tempest*, *Othello* and *Henry V*
+- 39 characters to catch (or avoid)
 - Automatic difficulty ramp: Easy → Normal → Hard
 - Names that fall vertically at random speeds
 - Streak bonuses and a level system
