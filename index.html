@@ -88,9 +88,10 @@ function flash(text,color){s.msg={text,color,t:1.6};}
 function spawn(){
   const cur=s.q[2];
   const hasCorrect=s.names.some(n=>n.text===cur&&n.y<FLOOR-80);
+  const onScreen=s.names.map(n=>n.text);
   let text;
-  if((!hasCorrect&&s.qAge>3)||Math.random()<.22)text=cur;
-  else{do{text=POOL[Math.random()*POOL.length|0]}while(text===cur)}
+  if(((!hasCorrect&&s.qAge>3)||Math.random()<.22)&&!onScreen.includes(cur))text=cur;
+  else{const opts=POOL.filter(p=>p!==cur&&!onScreen.includes(p));text=opts[Math.random()*opts.length|0]}
   ctx.font="bold 22px Georgia,serif";
   const len=ctx.measureText(text).width+8;
   let x=0;
@@ -140,7 +141,7 @@ function update(dt){
       }else loseLife("✗ It wasn’t "+n.text+"!");
     }else if(n.y>FLOOR){
       s.names.splice(i,1);
-      if(n.text===s.q[2])loseLife(n.text+" got away!");
+      if(n.text===s.q[2]){loseLife(n.text+" got away!");if(s.mode==='play')nextQuote();}
     }
   }
 }
