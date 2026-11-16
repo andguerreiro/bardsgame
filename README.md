@@ -2,7 +2,7 @@
 
 A fast-paced browser game about Shakespeare. A famous quote appears at the top of the screen while the names of Shakespearean characters rain down from above. Steer a tiny Shakespeare left and right, **catch the character who said the line**, and **dodge everyone else**.
 
-**▶ Play it now: [andguerreiro.github.io/bardsgame](https://andguerreiro.github.io/bardsgame)**
+**▶ Play it now: [bardsgame.pages.dev](https://bardsgame.pages.dev)**
 
 ---
 
@@ -74,18 +74,34 @@ python3 -m http.server 8000
 # then visit http://localhost:8000
 ```
 
-## Deploy with GitHub Pages
+## Deploy with Cloudflare Pages
 
-1. Make sure the game file is named `index.html` and sits in the root of the repository.
-2. On GitHub, go to **Settings → Pages**.
-3. Under **Build and deployment**, choose **Deploy from a branch**, select your main branch and the `/ (root)` folder, then save.
-4. After a minute or so, the game is live at `https://andguerreiro.github.io/bardsgame`.
+The game is hosted on [Cloudflare Pages](https://pages.cloudflare.com/) at **https://bardsgame.pages.dev**. It is a static site, so there is nothing to build.
+
+**Option A: connect the GitHub repository (recommended)**
+
+1. In the Cloudflare dashboard, go to **Workers & Pages → Create → Pages → Connect to Git**.
+2. Select the `andguerreiro/bardsgame` repository.
+3. Use these settings:
+   - **Project name:** `bardsgame` (this gives you the `bardsgame.pages.dev` address)
+   - **Production branch:** `main`
+   - **Framework preset:** None
+   - **Build command:** leave empty
+   - **Build output directory:** `/` (the repository root)
+4. Click **Save and Deploy**. Every push to `main` is deployed automatically.
+
+**Option B: direct upload**
+
+1. Go to **Workers & Pages → Create → Pages → Upload assets**.
+2. Name the project `bardsgame` and upload the project folder (it needs `index.html` and `favicon.png` in the root).
+3. Click **Deploy site**.
 
 ## Project structure
 
 ```
 bardsgame/
 ├── index.html   # the whole game: markup, styles and code
+├── favicon.png  # site icon (a tiny Shakespeare)
 └── README.md
 ```
 
