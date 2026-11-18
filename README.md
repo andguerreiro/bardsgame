@@ -154,6 +154,6 @@ Everything lives in `index.html`. Look for these pieces near the top of the scri
 
 Created by [andguerreiro](https://github.com/andguerreiro), with the game design, code, artwork (including the Shakespeare favicon and screenshots) and page text written by **Claude Sonnet 5.5**, an AI model made by [Anthropic](https://www.anthropic.com).
 
-The quotes are from the works of William Shakespeare, which are in the public domain. The game code is released under the MIT License. Add a `LICENSE` file to the repository if you want to make that official.
+The quotes are from the works of William Shakespeare, which are in the public domain. The game code is released under the [MIT License](LICENSE).
 
 Made with a quill, a ruff collar and a lot of ado. *All the world’s a stage.*
