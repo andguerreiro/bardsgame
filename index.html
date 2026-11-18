@@ -14,8 +14,10 @@
 <style>
 :root{--bg:#120a0e;--fg:#f3e6c8;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 html,body{height:100%;margin:0;background:var(--bg);color:var(--fg);color-scheme:dark;font-family:Georgia,"Times New Roman",serif}
-body{display:flex;align-items:center;justify-content:center;overflow:hidden}
-canvas{height:100%;max-height:100vh;max-width:100%;aspect-ratio:3/4;touch-action:none;display:block;background:#1b0f14}
+body{display:flex;align-items:center;justify-content:center;overflow:hidden;height:100vh;height:100dvh}
+/* Keep the exact 3:4 proportion on any screen: fit inside the viewport, never stretch */
+canvas{--h:calc(100vh - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px));width:min(100vw,calc(var(--h) * .75));height:auto;aspect-ratio:3/4;flex:none;touch-action:none;display:block;background:#1b0f14}
+@supports (height:100dvh){canvas{--h:calc(100dvh - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px))}}
 </style>
 </head>
 <body>
