@@ -60,7 +60,7 @@ const Q=[
 const POOL=["Hamlet","Ophelia","Polonius","Gertrude","Macbeth","Lady Macbeth","Macduff","Romeo","Juliet","Mercutio","Puck","Oberon","Titania","Lysander","Helena","Prospero","Ariel","Miranda","Iago","Othello","Cassio","Lear","Cordelia","Shylock","Portia","Caesar","Brutus","Antony","Cassius","Richard III","Falstaff","Malvolio","Viola","Bottom","Jaques","Orsino","The Witches","Soothsayer","Henry V"];
 const COLORS=["#ffd166","#9ad1ff","#ff9aa8","#b9f27c","#d7a8ff","#ffb36b","#7ff0d4"];
 
-let s={mode:'menu',score:0,lives:3,level:1,streak:0,hits:0,names:[],px:W/2,target:null,q:null,bag:[],spawn:0,msg:null,t:0,best:0,moving:false,diff:'normal'};
+let s={mode:'menu',score:0,lives:10,level:1,streak:0,hits:0,names:[],px:W/2,target:null,q:null,bag:[],spawn:0,msg:null,t:0,best:0,moving:false,diff:'normal'};
 try{s.best=+localStorage.getItem('bardBest')||0}catch(e){}
 const keys={};
 const DIFF={easy:{label:"EASY",lives:10,speed:.65,desc:"Slower names · 10 lives"},normal:{label:"NORMAL",lives:5,speed:1,desc:"Normal speed · 5 lives"},hard:{label:"HARD",lives:2,speed:1.45,desc:"Faster names · 2 lives"}};
@@ -68,8 +68,20 @@ const DKEYS=['easy','normal','hard'];
 const stage=()=>s.hits<5?'easy':s.hits<12?'normal':'hard';
 const PLAYS={"Romeu e Julieta":"Romeo and Juliet","Ricardo III":"Richard III","Júlio César":"Julius Caesar","O Mercador de Veneza":"The Merchant of Venice","Sonho de uma Noite de Verão":"A Midsummer Night’s Dream","A Tempestade":"The Tempest","Otelo":"Othello","Rei Lear":"King Lear"};
 const BTN=i=>({x:W/2-175,y:385+i*72,w:350,h:60});
+const SHR={x:W/2-150,y:600,w:300,h:56};
+const SHARE_URL="https://andguerreiro.itch.io/bardsgame";
+function inShare(e){const r=cv.getBoundingClientRect(),x=(e.clientX-r.left)/r.width*W,y=(e.clientY-r.top)/r.height*H;return x>=SHR.x&&x<=SHR.x+SHR.w&&y>=SHR.y&&y<=SHR.y+SHR.h;}
+function shareScore(){
+  const text="I scored "+s.score+" points on Who Said It? — The Bard’s Game! Can you beat me?";
+  const full=text+" "+SHARE_URL;
+  const done=m=>{s.shareMsg=m;s.shareT=3.5;};
+  const fallback=()=>{const ta=document.createElement('textarea');ta.value=full;document.body.appendChild(ta);ta.select();let ok=false;try{ok=document.execCommand('copy')}catch(e){}ta.remove();done(ok?"Score copied! Paste it anywhere.":"Share this link: andguerreiro.itch.io/bardsgame");};
+  if(navigator.share){navigator.share({title:"Who Said It?",text,url:SHARE_URL}).catch(e=>{if(!e||e.name!=='AbortError')fallback();});return;}
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(full).then(()=>done("Score copied! Paste it anywhere."),fallback);}
+  else fallback();
+}
 function drawMenu(){
-  ctx.fillStyle="rgba(10,5,7,.86)";ctx.fillRect(0,0,W,FLOOR);
+  ctx.fillStyle="rgb(14,7,10)";ctx.fillRect(0,0,W,H);
   ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillStyle="#f3e6c8";
   ctx.font="bold 44px Georgia,serif";ctx.fillText(s.mode==='over'?"Curtain Call":"Who Said It?",W/2,110);
   ctx.font="italic 20px Georgia,serif";ctx.fillStyle="#c9a24a";
@@ -81,6 +93,12 @@ function drawMenu(){
   ctx.beginPath();ctx.roundRect(W/2-150,470,300,64,12);ctx.fill();ctx.stroke();
   ctx.fillStyle="#ffd166";ctx.font="bold 28px Georgia,serif";ctx.fillText("PLAY",W/2,502);
   ctx.fillStyle="#c9a24a";ctx.font="16px Georgia,serif";ctx.fillText("Tap anywhere or press Enter to start",W/2,565);
+  if(s.mode==='over'){
+    ctx.fillStyle="#1f3d2a";ctx.strokeStyle="#8fe388";ctx.lineWidth=3;
+    ctx.beginPath();ctx.roundRect(SHR.x,SHR.y,SHR.w,SHR.h,12);ctx.fill();ctx.stroke();
+    ctx.fillStyle="#8fe388";ctx.font="bold 22px Georgia,serif";ctx.fillText("SHARE YOUR SCORE",W/2,SHR.y+28);
+    if(s.shareMsg){ctx.fillStyle="#f3e6c8";ctx.font="15px Georgia,serif";ctx.fillText(s.shareMsg,W/2,SHR.y+SHR.h+28);}
+  }
 }
 
 function nextQuote(){
@@ -124,6 +142,7 @@ function loseLife(txt){
 function update(dt){
   s.t+=dt;
   if(s.msg){s.msg.t-=dt;if(s.msg.t<=0)s.msg=null;}
+  if(s.shareT>0){s.shareT-=dt;if(s.shareT<=0)s.shareMsg=null;}
   if(s.mode!=='play')return;
   const sp=420;
   let dir=(keys.ArrowRight||keys.d||keys.D?1:0)-(keys.ArrowLeft||keys.a||keys.A?1:0);
@@ -233,14 +252,15 @@ requestAnimationFrame(loop);
 addEventListener('keydown',e=>{
   keys[e.key]=true;
   if(["ArrowLeft","ArrowRight"," "].includes(e.key))e.preventDefault();
-  if(s.mode!=='play'&&(e.key==='Enter'||e.key===' '))start();
+  if(s.mode!=='play'&&(e.key==='Enter'||e.key===' '))start();else if(s.mode==='over'&&(e.key==='s'||e.key==='S'))shareScore();
 });
 addEventListener('keyup',e=>{keys[e.key]=false});
 function setTarget(e){const r=cv.getBoundingClientRect();s.target=(e.clientX-r.left)/r.width*W;}
 cv.addEventListener('pointerdown',e=>{
-  if(s.mode!=='play'){start();return;}
+  if(s.mode!=='play'){if(s.mode==='over'&&inShare(e))return;start();return;}
   cv.setPointerCapture(e.pointerId);setTarget(e);
 });
+cv.addEventListener('click',e=>{if(s.mode==='over'&&inShare(e))shareScore();});
 cv.addEventListener('pointermove',e=>{if(e.buttons||e.pointerType==='touch')setTarget(e);});
 </script>
 </body>

@@ -4,7 +4,28 @@ A fast-paced browser game about Shakespeare. A famous quote appears at the top o
 
 **▶ Play it now: [bardsgame.pages.dev](https://bardsgame.pages.dev)**
 
+**🎮 Also on itch.io: [andguerreiro.itch.io/bardsgame](https://andguerreiro.itch.io/bardsgame)**
+
+<p align="center">
+  <img src="images/gameplay.gif" width="320" alt="Gameplay: Shakespeare catching the right character name and dodging the others">
+</p>
+
 ---
+
+## Screenshots
+
+<table>
+  <tr>
+    <td align="center"><img src="images/screenshot-1-title.png" width="180" alt="Title screen"><br><sub>Title screen</sub></td>
+    <td align="center"><img src="images/screenshot-2-gameplay.png" width="180" alt="Gameplay"><br><sub>Gameplay</sub></td>
+    <td align="center"><img src="images/screenshot-3-catch.png" width="180" alt="A correct catch"><br><sub>A correct catch</sub></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="images/screenshot-4-fast.png" width="180" alt="Later, faster stage"><br><sub>Faster names</sub></td>
+    <td align="center"><img src="images/screenshot-5-gameover.png" width="180" alt="Game over screen with share button"><br><sub>Game over and share</sub></td>
+    <td></td>
+  </tr>
+</table>
 
 ## How to play
 
@@ -18,7 +39,7 @@ You lose a life when you:
 - catch the **wrong** character, or
 - let the **right** character fall to the floor.
 
-When your lives run out, the curtain falls. Your best score is saved in your browser.
+When your lives run out, the curtain falls. Your best score is saved in your browser. On the game-over screen you can tap **Share your score** (or press `S`) to send your score and the game link to friends. On phones this opens the share sheet; on desktop it copies the message to your clipboard.
 
 ### Automatic difficulty
 
@@ -43,6 +64,7 @@ Your lives are not reset when the stage changes.
 | Action                       | Keyboard                    | Mouse / Touch           |
 | ---------------------------- | --------------------------- | ----------------------- |
 | Move                         | `←` `→` or `A` `D`          | Click/tap and drag      |
+| Share score (game over)      | `S`                         | Tap the share button    |
 | Start / replay               | `Enter` or `Space`          | Tap anywhere on the title screen |
 
 The game works on desktop and mobile browsers.
@@ -55,6 +77,7 @@ The game works on desktop and mobile browsers.
 - Names that fall vertically at random speeds
 - Streak bonuses and a level system
 - Local best score (stored with `localStorage`)
+- A **Share your score** button on the game-over screen (share sheet on phones, clipboard on desktop)
 - No dependencies, no build step: a single HTML file with plain JavaScript and the Canvas API
 
 ## Run it locally
@@ -93,7 +116,7 @@ The game is hosted on [Cloudflare Pages](https://pages.cloudflare.com/) at **htt
 **Option B: direct upload**
 
 1. Go to **Workers & Pages → Create → Pages → Upload assets**.
-2. Name the project `bardsgame` and upload the project folder (it needs `index.html` and `favicon.png` in the root).
+2. Name the project `bardsgame` and upload the project folder (it needs `index.html` and `favicon.png` in the root; keep the `images/` folder too if you want the README pictures).
 3. Click **Deploy site**.
 
 ## Project structure
@@ -102,6 +125,7 @@ The game is hosted on [Cloudflare Pages](https://pages.cloudflare.com/) at **htt
 bardsgame/
 ├── index.html   # the whole game: markup, styles and code
 ├── favicon.png  # site icon (a tiny Shakespeare)
+├── images/      # GIF and screenshots used in this README
 └── README.md
 ```
 
@@ -118,6 +142,7 @@ Everything lives in `index.html`. Look for these pieces near the top of the scri
 - **`POOL`**: every character name that can fall. The `character` of each quote must also appear here, spelled exactly the same way.
 - **`DIFF`** and **`stage()`**: the speed multiplier of each stage and the number of correct catches that trigger Normal (5) and Hard (12). Tweak these to rebalance the game.
 - **`PLAYS`**: maps stored play names to the display names shown after a correct catch. Play names that are not in this map are shown as written.
+- **`SHARE_URL`** and **`shareScore()`**: the link and message used by the share button on the game-over screen.
 
 ## Tech
 
