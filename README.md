@@ -64,6 +64,7 @@ Your lives are not reset when the stage changes.
 | Action                       | Keyboard                    | Mouse / Touch           |
 | ---------------------------- | --------------------------- | ----------------------- |
 | Move                         | `←` `→` or `A` `D`          | Click/tap and drag      |
+| Mute / unmute sound          | `M`                         | Tap the speaker icon    |
 | Share score (game over)      | `S`                         | Tap the share button    |
 | Start / replay               | `Enter` or `Space`          | Tap anywhere on the title screen |
 
@@ -76,6 +77,7 @@ The game works on desktop and mobile browsers.
 - Automatic difficulty ramp: Easy → Normal → Hard
 - Names that fall vertically at random speeds
 - Streak bonuses and a level system
+- Sound effects for catches, mistakes, level-ups and game over, with a mute button (your choice is remembered)
 - Local best score (stored with `localStorage`)
 - A **Share your score** button on the game-over screen (share sheet on phones, clipboard on desktop)
 - No dependencies, no build step: a single HTML file with plain JavaScript and the Canvas API
@@ -147,6 +149,7 @@ Everything lives in `index.html`. Look for these pieces near the top of the scri
 ## Tech
 
 - HTML5 Canvas
+- Web Audio API (all sounds are generated in the browser, so there are no audio files)
 - Vanilla JavaScript (no frameworks, no libraries)
 - Georgia/serif system fonts, so there are no external requests
 
