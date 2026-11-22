@@ -133,21 +133,23 @@ The game is hosted on [Cloudflare Pages](https://pages.cloudflare.com/) at **htt
 **Option B: direct upload**
 
 1. Go to **Workers & Pages → Create → Pages → Upload assets**.
-2. Name the project `bardsgame` and upload the project folder (it needs `index.html`, `manifest.json`, `sw.js` and the icon files in the root; keep the `images/` folder too for the README pictures and the social preview image).
+2. Name the project `bardsgame` and upload the project folder (it needs `index.html`, `manifest.json`, `sw.js`, `favicon.ico` and the `icons/` folder; keep the `images/` folder too for the README pictures and the social preview image).
 3. Click **Deploy site**.
 
 ## Project structure
 
 ```
 bardsgame/
-├── index.html      # the whole game: markup, styles, bitmap font and pixel art
-├── favicon.png     # pixel-art Shakespeare site icon (also favicon.ico and 16/32/48/180 px versions)
-├── manifest.json   # app manifest, so the game can be installed on a phone
-├── sw.js           # service worker that caches the game for offline play
-├── icon-192.png, icon-512.png, icon-maskable-512.png   # app icons
-├── images/         # cover art, social preview (og.png), animated GIF and screenshots
-├── ITCH_PAGE.md    # the text of the itch.io game page
-├── LICENSE         # MIT License
+├── index.html        # the whole game: markup, styles, bitmap font and pixel art
+├── manifest.json     # app manifest, so the game can be installed on a phone
+├── sw.js             # service worker that caches the game for offline play
+├── favicon.ico       # browser tab icon (kept at the root, where browsers look for it)
+├── icons/            # favicon PNGs (16, 32, 48, 180 px) and the app icons
+├── images/           # cover art, social preview, animated GIF and screenshots
+│   └── sprite/       # the Shakespeare sprite, for reference
+├── docs/
+│   └── ITCH_PAGE.md  # the text of the itch.io game page
+├── LICENSE           # MIT License
 └── README.md
 ```
 
