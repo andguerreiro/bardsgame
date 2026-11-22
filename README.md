@@ -1,13 +1,13 @@
 # 🎭 Who Said It? — The Bard’s Game
 
-A fast-paced browser game about Shakespeare. A famous quote appears at the top of the screen while the names of Shakespearean characters rain down from above. Steer a tiny Shakespeare left and right, **catch the character who said the line**, and **dodge everyone else**.
+A fast-paced **pixel-art** browser game about Shakespeare. A famous quote appears at the top of the screen while the names of Shakespearean characters rain down from above. Steer a tiny pixel Shakespeare left and right, **catch the character who said the line**, and **dodge everyone else**.
 
 **▶ Play it now: [bardsgame.pages.dev](https://bardsgame.pages.dev)**
 
 **🎮 Also on itch.io: [andguerreiro.itch.io/bardsgame](https://andguerreiro.itch.io/bardsgame)**
 
 <p align="center">
-  <img src="images/gameplay.gif" width="320" alt="Gameplay: Shakespeare catching the right character name and dodging the others">
+  <img src="images/gameplay.gif" width="300" alt="Pixel-art gameplay: Shakespeare catching the right character name and dodging the others">
 </p>
 
 ---
@@ -39,7 +39,7 @@ You lose a life when you:
 - catch the **wrong** character, or
 - let the **right** character fall to the floor.
 
-When your lives run out, the curtain falls. Your best score is saved in your browser. On the game-over screen you can tap **Share your score** (or press `S`) to send your score and the game link to friends. On phones this opens the share sheet; on desktop it copies the message to your clipboard.
+When your lives run out, the curtain falls. Your best score is saved in your browser. On the game-over screen you can tap **Play Again**, or tap **Share Score** (or press `S`) to send your score and the game link to friends. On phones this opens the share sheet; on desktop it copies the message to your clipboard.
 
 ### Automatic difficulty
 
@@ -65,21 +65,23 @@ Your lives are not reset when the stage changes.
 | ---------------------------- | --------------------------- | ----------------------- |
 | Move                         | `←` `→` or `A` `D`          | Click/tap and drag      |
 | Mute / unmute sound          | `M`                         | Tap the speaker icon    |
-| Share score (game over)      | `S`                         | Tap the share button    |
-| Start / replay               | `Enter` or `Space`          | Tap anywhere on the title screen |
+| Share score (game over)      | `S`                         | Tap **Share Score**     |
+| Start / replay               | `Enter` or `Space`          | Tap anywhere on the title screen, or **Play Again** |
 
 The game works on desktop and mobile browsers.
 
 ## Features
 
+- **Complete pixel-art presentation**: a hand-built 5×7 bitmap font, a chunky Shakespeare sprite, theater curtains, a dithered spotlight, pixel UI panels, hearts, masks and particles
 - 30 of Shakespeare’s most famous quotes, from *Hamlet*, *Macbeth*, *Romeo and Juliet*, *Julius Caesar*, *Richard III*, *The Merchant of Venice*, *As You Like It*, *Twelfth Night*, *A Midsummer Night’s Dream*, *The Tempest*, *Othello* and *Henry V*
 - 39 characters to catch (or avoid)
 - Automatic difficulty ramp: Easy → Normal → Hard
-- Names that fall vertically at random speeds
+- Names that fall vertically at random speeds, with a walking bob for the Bard
 - Streak bonuses and a level system
 - Sound effects for catches, mistakes, level-ups and game over, with a mute button (your choice is remembered)
 - Local best score (stored with `localStorage`)
-- A **Share your score** button on the game-over screen (share sheet on phones, clipboard on desktop)
+- A **Share Score** button on the game-over screen (share sheet on phones, clipboard on desktop)
+- Pixel-art favicon, cover art, social preview image, animated GIF and screenshots
 - No dependencies, no build step: a single HTML file with plain JavaScript and the Canvas API
 
 ## Run it locally
@@ -118,16 +120,18 @@ The game is hosted on [Cloudflare Pages](https://pages.cloudflare.com/) at **htt
 **Option B: direct upload**
 
 1. Go to **Workers & Pages → Create → Pages → Upload assets**.
-2. Name the project `bardsgame` and upload the project folder (it needs `index.html` and `favicon.png` in the root; keep the `images/` folder too if you want the README pictures).
+2. Name the project `bardsgame` and upload the project folder (it needs `index.html` and the favicon files in the root; keep the `images/` folder too for the README pictures and the social preview image).
 3. Click **Deploy site**.
 
 ## Project structure
 
 ```
 bardsgame/
-├── index.html   # the whole game: markup, styles and code
-├── favicon.png  # site icon (a tiny Shakespeare)
-├── images/      # GIF and screenshots used in this README
+├── index.html      # the whole game: markup, styles, bitmap font and pixel art
+├── favicon.png     # pixel-art Shakespeare site icon (also favicon.ico and 16/32/48/180 px versions)
+├── images/         # cover art, social preview (og.png), animated GIF and screenshots
+├── ITCH_PAGE.md    # the text of the itch.io game page
+├── LICENSE         # MIT License
 └── README.md
 ```
 
@@ -145,18 +149,23 @@ Everything lives in `index.html`. Look for these pieces near the top of the scri
 - **`DIFF`** and **`stage()`**: the speed multiplier of each stage and the number of correct catches that trigger Normal (5) and Hard (12). Tweak these to rebalance the game.
 - **`PLAYS`**: maps stored play names to the display names shown after a correct catch. Play names that are not in this map are shown as written.
 - **`SHARE_URL`** and **`shareScore()`**: the link and message used by the share button on the game-over screen.
+- **`FS`**, **`FONT`** and **`textImage()`**: the 5×7 bitmap font. Add a glyph to `FS` (seven rows of five `0`/`1` bits) if you add text with a new symbol.
+- **`BARD`** and **`BP`**: the Shakespeare sprite, drawn as a character map plus a palette. **`C`** is the full pixel-art palette.
 
 ## Tech
 
-- HTML5 Canvas
+- HTML5 Canvas at a fixed 600×800 internal resolution, scaled up with nearest-neighbour pixels
+- A hand-built 5×7 bitmap font rendered from `fillRect` glyphs, so there are no font files or external requests
 - Web Audio API (all sounds are generated in the browser, so there are no audio files)
 - Vanilla JavaScript (no frameworks, no libraries)
-- Georgia/serif system fonts, so there are no external requests
 
 ## Credits and license
 
-Created by [andguerreiro](https://github.com/andguerreiro), with the game design, code, artwork (including the Shakespeare favicon and screenshots) and page text written by **Claude Sonnet 5.5**, an AI model made by [Anthropic](https://www.anthropic.com).
+Created by [andguerreiro](https://github.com/andguerreiro).
+
+- **Game design, code and original pixel artwork:** **Claude Sonnet 5.5**, an AI model made by [Anthropic](https://www.anthropic.com).
+- **Visual refresh** (the redesigned Shakespeare sprite, favicon, screenshots, promotional artwork and animated preview): produced with **Perplexity**.
 
 The quotes are from the works of William Shakespeare, which are in the public domain. The game code is released under the [MIT License](LICENSE).
 
-Made with a quill, a ruff collar and a lot of ado. *All the world’s a stage.*
+Made with a quill, a ruff collar, a 5×7 bitmap font and a lot of ado. *All the world’s a stage.*
