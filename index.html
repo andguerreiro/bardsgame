@@ -8,6 +8,11 @@
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png">
 <link rel="apple-touch-icon" href="favicon-180.png">
+<link rel="manifest" href="manifest.json">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Who Said It?">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#120a0e">
 <meta name="description" content="Who Said It? A pixel-art Shakespeare quote game: catch the character who said the line and dodge the wrong ones.">
 <meta property="og:title" content="Who Said It? — The Bard’s Game">
@@ -849,6 +854,9 @@ window.__bard={
   rank:rankFor,stage:stage,setPaused:v=>{paused=!!v},
   setQuote:i=>{s.q=Q[i];s.qAge=0;},render:draw
 };
+</script>
+<script>
+if('serviceWorker' in navigator&&location.protocol.indexOf('http')===0){window.addEventListener('load',()=>{navigator.serviceWorker.register('sw.js').catch(()=>{});});}
 </script>
 </body>
 </html>

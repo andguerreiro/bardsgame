@@ -80,9 +80,22 @@ The game works on desktop and mobile browsers.
 - Streak bonuses and a level system
 - Sound effects for catches, mistakes, level-ups and game over, with a mute button (your choice is remembered)
 - Local best score (stored with `localStorage`)
+- Installable as an app on phones and desktops, with offline play
 - A **Share Score** button on the game-over screen (share sheet on phones, clipboard on desktop)
 - Pixel-art favicon, cover art, social preview image, animated GIF and screenshots
 - No dependencies, no build step: a single HTML file with plain JavaScript and the Canvas API
+
+## Install it on your phone
+
+The game is a Progressive Web App (PWA), so you can add it to your home screen and play it like an app, even offline.
+
+- **Android (Chrome):** open [bardsgame.pages.dev](https://bardsgame.pages.dev), tap the **⋮** menu, then **Install app** (or **Add to Home screen**).
+- **iPhone and iPad (Safari):** open the page, tap the **Share** button, then **Add to Home Screen**.
+- **Desktop (Chrome or Edge):** click the install icon at the right end of the address bar.
+
+After the first visit the game works without a connection. When you publish a new version, change the `CACHE` name at the top of `sw.js` (for example to `bardsgame-v2.1`) so players receive the update.
+
+The installable version only works from the Cloudflare page. On itch.io the game runs inside the itch.io page, so the install option isn't available there.
 
 ## Run it locally
 
@@ -120,7 +133,7 @@ The game is hosted on [Cloudflare Pages](https://pages.cloudflare.com/) at **htt
 **Option B: direct upload**
 
 1. Go to **Workers & Pages → Create → Pages → Upload assets**.
-2. Name the project `bardsgame` and upload the project folder (it needs `index.html` and the favicon files in the root; keep the `images/` folder too for the README pictures and the social preview image).
+2. Name the project `bardsgame` and upload the project folder (it needs `index.html`, `manifest.json`, `sw.js` and the icon files in the root; keep the `images/` folder too for the README pictures and the social preview image).
 3. Click **Deploy site**.
 
 ## Project structure
@@ -129,6 +142,9 @@ The game is hosted on [Cloudflare Pages](https://pages.cloudflare.com/) at **htt
 bardsgame/
 ├── index.html      # the whole game: markup, styles, bitmap font and pixel art
 ├── favicon.png     # pixel-art Shakespeare site icon (also favicon.ico and 16/32/48/180 px versions)
+├── manifest.json   # app manifest, so the game can be installed on a phone
+├── sw.js           # service worker that caches the game for offline play
+├── icon-192.png, icon-512.png, icon-maskable-512.png   # app icons
 ├── images/         # cover art, social preview (og.png), animated GIF and screenshots
 ├── ITCH_PAGE.md    # the text of the itch.io game page
 ├── LICENSE         # MIT License
@@ -156,6 +172,7 @@ Everything lives in `index.html`. Look for these pieces near the top of the scri
 
 - HTML5 Canvas at a fixed 600×800 internal resolution, scaled up with nearest-neighbour pixels
 - A hand-built 5×7 bitmap font rendered from `fillRect` glyphs, so there are no font files or external requests
+- Service worker and web app manifest for installation and offline play
 - Web Audio API (all sounds are generated in the browser, so there are no audio files)
 - Vanilla JavaScript (no frameworks, no libraries)
 
