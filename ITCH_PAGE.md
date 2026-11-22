@@ -52,9 +52,7 @@ When your lives run out, the curtain falls. Check your final score, share it wit
 
 Created by andguerreiro.
 
-Game design, code and original pixel artwork: Claude Sonnet 5.5 (Anthropic).
-
-Visual refresh, including the redesigned Shakespeare sprite, favicon, screenshots, promotional artwork and animated preview: Perplexity.
+AI tools were used throughout this project. Several AI assistants helped with the game design, code, pixel artwork, visual refresh (Shakespeare sprite, favicon, screenshots, promotional artwork and animated preview) and page text.
 
 The quotes are from the works of William Shakespeare, which are in the public domain.
 

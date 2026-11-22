@@ -163,8 +163,7 @@ Everything lives in `index.html`. Look for these pieces near the top of the scri
 
 Created by [andguerreiro](https://github.com/andguerreiro).
 
-- **Game design, code and original pixel artwork:** **Claude Sonnet 5.5**, an AI model made by [Anthropic](https://www.anthropic.com).
-- **Visual refresh** (the redesigned Shakespeare sprite, favicon, screenshots, promotional artwork and animated preview): produced with **Perplexity**.
+AI tools were used throughout this project. Several AI assistants (large language models from different providers) helped with the game design, code, pixel artwork, visual refresh (Shakespeare sprite, favicon, screenshots, promotional artwork and animated preview) and page text.
 
 The quotes are from the works of William Shakespeare, which are in the public domain. The game code is released under the [MIT License](LICENSE).
 
