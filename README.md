@@ -103,8 +103,6 @@ The game is a Progressive Web App (PWA), so you can add it to your home screen a
 - **iPhone and iPad (Safari):** open the page, tap the **Share** button, then **Add to Home Screen**.
 - **Desktop (Chrome or Edge):** click the install icon at the right end of the address bar.
 
-After the first visit the game works without a connection. When you publish a new version, change the `CACHE` name at the top of `sw.js` (for example to `bardsgame-v2.1`) so players receive the update.
-
 The installable version only works from the Cloudflare page. On itch.io the game runs inside the itch.io page, so the install option isn't available there.
 
 ## Run it locally
@@ -123,28 +121,6 @@ Or serve it with any static server:
 python3 -m http.server 8000
 # then visit http://localhost:8000
 ```
-
-## Deploy with Cloudflare Pages
-
-The game is hosted on [Cloudflare Pages](https://pages.cloudflare.com/) at **https://bardsgame.pages.dev**. It is a static site, so there is nothing to build.
-
-**Option A: connect the GitHub repository (recommended)**
-
-1. In the Cloudflare dashboard, go to **Workers & Pages → Create → Pages → Connect to Git**.
-2. Select the `andguerreiro/bardsgame` repository.
-3. Use these settings:
-   - **Project name:** `bardsgame` (this gives you the `bardsgame.pages.dev` address)
-   - **Production branch:** `main`
-   - **Framework preset:** None
-   - **Build command:** leave empty
-   - **Build output directory:** `/` (the repository root)
-4. Click **Save and Deploy**. Every push to `main` is deployed automatically.
-
-**Option B: direct upload**
-
-1. Go to **Workers & Pages → Create → Pages → Upload assets**.
-2. Name the project `bardsgame` and upload the project folder (it needs `index.html`, `manifest.json`, `sw.js`, `favicon.ico` and the `icons/` folder; keep the `images/` folder too for the README pictures and the social preview image).
-3. Click **Deploy site**.
 
 ## Project structure
 
