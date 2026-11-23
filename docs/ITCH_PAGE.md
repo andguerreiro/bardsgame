@@ -31,8 +31,8 @@ When your lives run out, the curtain falls. Check your final score, share it wit
 
 ## Features
 
-- 30 famous Shakespeare quotes from *Hamlet*, *Macbeth*, *Romeo and Juliet*, *Julius Caesar*, *The Tempest*, *Othello* and more
-- 39 characters to catch or dodge
+- 60 famous Shakespeare quotes from *Hamlet*, *Macbeth*, *Romeo and Juliet*, *Julius Caesar*, *King Lear*, *The Tempest*, *Othello* and more
+- 45 characters to catch or dodge
 - A theatrical pixel-art stage with curtains, a spotlight, masks and particle effects
 - Names that fall vertically at different speeds
 - Streak bonuses for consecutive correct catches

@@ -73,8 +73,8 @@ The game works on desktop and mobile browsers.
 ## Features
 
 - **Complete pixel-art presentation**: a hand-built 5×7 bitmap font, a chunky Shakespeare sprite, theater curtains, a dithered spotlight, pixel UI panels, hearts, masks and particles
-- 30 of Shakespeare’s most famous quotes, from *Hamlet*, *Macbeth*, *Romeo and Juliet*, *Julius Caesar*, *Richard III*, *The Merchant of Venice*, *As You Like It*, *Twelfth Night*, *A Midsummer Night’s Dream*, *The Tempest*, *Othello* and *Henry V*
-- 39 characters to catch (or avoid)
+- 60 of Shakespeare’s most famous quotes, from *Hamlet*, *Macbeth*, *Romeo and Juliet*, *Julius Caesar*, *King Lear*, *Othello*, *The Tempest*, *Twelfth Night*, *A Midsummer Night’s Dream*, *The Merchant of Venice*, *As You Like It*, *Richard III*, *Henry IV*, *Henry V*, *Antony and Cleopatra* and more
+- 45 characters to catch (or avoid)
 - Automatic difficulty ramp: Easy → Normal → Hard
 - Names that fall vertically at random speeds, with a walking bob for the Bard
 - Streak bonuses and a level system
@@ -157,10 +157,10 @@ bardsgame/
 
 Everything lives in `index.html`. Look for these pieces near the top of the script:
 
-- **`Q`**: the list of quotes. Each entry has the format `[quote, unused, character, play]`. The second field is not displayed, so you can leave it as an empty string. Example:
+- **`Q`**: the list of quotes. Each entry has the format `[quote, act, character, play]`. The act is shown at the bottom right of the quote panel. Example:
 
   ```js
-  ["Brevity is the soul of wit.", "", "Polonius", "Hamlet"]
+  ["Brevity is the soul of wit.", "Act 2, Scene 2", "Polonius", "Hamlet"]
   ```
 
 - **`POOL`**: every character name that can fall. The `character` of each quote must also appear here, spelled exactly the same way.
