@@ -43,21 +43,30 @@ When your lives run out, the curtain falls. Your best score is saved in your bro
 
 ### Automatic difficulty
 
-There is no difficulty menu. The game starts gentle and speeds up on its own as you catch the right characters:
+There is no difficulty menu. Your total number of correct catches controls both your difficulty stage (Easy, Normal or Hard) and your level:
 
-| Stage  | Reached after        | Fall speed |
-| ------ | -------------------- | ---------- |
-| Easy   | start                | Slower     |
-| Normal | 5 correct catches    | Standard   |
-| Hard   | 12 correct catches   | Faster     |
+| Total correct catches | Difficulty stage | Level |
+| --------------------- | ---------------- | ----- |
+| 0–3                   | Easy             | 1     |
+| 4                     | Easy             | 2     |
+| 5–7                   | Normal           | 2     |
+| 8–11                  | Normal           | 3     |
+| 12–15                 | Hard             | 4     |
+| 16–19                 | Hard             | 5     |
 
-Your lives are not reset when the stage changes.
+After that, the stage stays Hard, while the level keeps increasing every 4 correct catches: level 6 at 20, level 7 at 24, and so on.
+
+- The difficulty stage changes at 5 and 12 correct catches, giving newly spawned names an additional speed increase.
+- Every level increase also makes newly spawned names faster and gradually shortens the interval between spawns, down to a minimum base interval.
+- At 12 correct catches, both changes happen together: you enter Hard and reach level 4.
+
+These counts are cumulative, not a streak: mistakes do not reduce your level or difficulty stage. Your lives are not reset when either changes. Names already falling keep their current speed.
 
 ### Scoring
 
 - Each correct catch earns **10 points**, plus **2 bonus points per catch in your current streak** (the bonus caps at +20).
 - Wrong catches and misses reset your streak.
-- Every **4 correct catches** you level up, and the names fall faster.
+- Level and difficulty progression use your total correct catches, separately from points and streak bonuses (see the table above).
 
 ## Controls
 
