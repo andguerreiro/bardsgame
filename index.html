@@ -296,53 +296,54 @@ function drawBardSprite(g,cx,feet,sc,walk){
 
 /* ---------- masks ---------- */
 const MASK_COM=[
-"......WWWWWWWW......",
-"....WWWWWWWWWWWW....",
-"...WWWWWWWWWWWWWW...",
-"..WWWWWWWWWWWWWWWW..",
-".WWWWWWWWWWWWWWWWWW.",
-".WWWWWEEWWWWEEWWWWW.",
-".WWWWWEEWWWWEEWWWWW.",
-".WWWWWEEWWWWEEWWWWW.",
-".WWWWWWWWWWWWWWWWWW.",
-".WWWWWWWWWWWWWWWWWW.",
-".WWWWWWWWWWWWWWWWWW.",
-".WWWWWWWWWWWWWWWWWW.",
-".WWWWWMMMMMMWWWWWWW.",
-".WWWWMRRRRRRMWWWWWW.",
-".WWWWWMRRRRMWWWWWWW.",
-".WWWWWWMMMMWWWWWWWW.",
-"..WWWWWWWWWWWWWWWW..",
-"...WWWWWWWWWWWWWW...",
-"....WWWWWWWWWWWW....",
-".....WWWWWWWWWW....."
+".....OOOOOOOOOO.....",
+"...OOWWWWWWWWWWOO...",
+"..OWWWWWWWWWWWWWWO..",
+".OWWWWWWWWWWWWWWWWO.",
+".OWWEEEEWWWWEEEEWWO.",
+".OWWWWWWWWWWWWWWWWO.",
+".OWWWEEWWWWWWEEWWWO.",
+".OWWEEEEWWWWEEEEWWO.",
+".OWWWWWWWWWWWWWWWWO.",
+"..OWWWWWWNNWWWWWWO..",
+"..OWWWWWWNNWWWWWWO..",
+"..OWWWWWWWWWWWWWWO..",
+"...OWEEWWWWWWEEWO...",
+"...OWEEEEEEEEEEWO...",
+"....OWEEEEEEEEWO....",
+"....OWWEEEEEEWWO....",
+".....OWWWWWWWWO.....",
+"......OWWWWWWO......",
+".......OWWWWO.......",
+"........OOOO........"
 ];
 const MASK_TRAG=[
-"......WWWWWWWW......",
-"....WWWWWWWWWWWW....",
-"...WWWWWWWWWWWWWW...",
-"..WWWWWWWWWWWWWWWW..",
-".WWWWWWWWWWWWWWWWWW.",
-".WWWWWEEWWWWEEWWWWW.",
-".WWWWWEEWWWWEEWWWWW.",
-".WWWWWEEWWWWEEWWWWW.",
-".WWWWWWWWWWWWWWWWWW.",
-".WWWWWWWWWWWWWWWWWW.",
-".WWWWWWWWWWWWWWWWWW.",
-".WWWWWWWWWWWWWWWWWW.",
-".WWWWWWMMMMWWWWWWWW.",
-".WWWWWMRRRRMWWWWWWW.",
-".WWWWMRRRRRRMWWWWWW.",
-".WWWWWMMMMMMWWWWWWW.",
-"..WWWWWWWWWWWWWWWW..",
-"...WWWWWWWWWWWWWW...",
-"....WWWWWWWWWWWW....",
-".....WWWWWWWWWW....."
+".....OOOOOOOOOO.....",
+"...OOWWWWWWWWWWOO...",
+"..OWWWWWWWWWWWWWWO..",
+".OWWWWWWWWWWWWWWWWO.",
+".OWWWWEEWWWWEEWWWWO.",
+".OWWEEWWWWWWWWEEWWO.",
+".OWWEEEWWWWWWEEEWWO.",
+".OWWWEEWWWWWWEEWWWO.",
+".OWWWWWWWWWWWWWWWWO.",
+"..OWWWWWWNNWWWWWWO..",
+"..OWWWWWWNNWWWWWWO..",
+"..OWWWWWWWWWWWWWWO..",
+"...OWWWWEEEEWWWWO...",
+"...OWWWEEEEEEWWWO...",
+"....OWEEEWWEEEWO....",
+"....OWEEWWWWEEWO....",
+".....OWWWWWWWWO.....",
+"......OWWWWWWO......",
+".......OWWWWO.......",
+"........OOOO........"
 ];
 function drawMask(g,map,x,y,sc){
+  const colors={W:C.cream,E:C.ink,O:C.goldD,N:C.parchD};
   for(let r=0;r<map.length;r++)for(let c=0;c<map[r].length;c++){
     const ch=map[r][c];if(ch==='.')continue;
-    g.fillStyle=ch==='W'?C.cream:(ch==='E'?C.ink:(ch==='M'?C.redD:C.gold));
+    g.fillStyle=colors[ch]||C.cream;
     g.fillRect(x+c*sc,y+r*sc,sc,sc);
   }
 }
