@@ -39,7 +39,7 @@ You lose a life when you:
 - catch the **wrong** character, or
 - let the **right** character fall to the floor.
 
-When your lives run out, the curtain falls. Your best score is saved in your browser. On the game-over screen you can tap **Play Again**, or tap **Share Score** (or press `S`) to send your score and the game link to friends. On phones this opens the share sheet; on desktop it copies the message to your clipboard.
+When your lives run out, the curtain falls. Your best score is saved in your browser. On the game-over screen you can tap **Play Again**, or tap **Share Score** (or press `S`) to copy your score and the game link to the clipboard, ready to paste to friends anywhere.
 
 ### Automatic difficulty
 
@@ -79,9 +79,10 @@ The game works on desktop and mobile browsers.
 - Names that fall vertically at random speeds, with a walking bob for the Bard
 - Streak bonuses and a level system
 - Sound effects for catches, mistakes, level-ups and game over, with a mute button (your choice is remembered)
+- Vibration feedback on phones for catches, mistakes, level-ups and game over
 - Local best score (stored with `localStorage`)
 - Installable as an app on phones and desktops, with offline play
-- A **Share Score** button on the game-over screen (share sheet on phones, clipboard on desktop)
+- A **Share Score** button on the game-over screen that copies your score and the game link to the clipboard
 - Pixel-art favicon, cover art, social preview image, animated GIF and screenshots
 - No dependencies, no build step: a single HTML file with plain JavaScript and the Canvas API
 

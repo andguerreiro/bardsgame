@@ -26,7 +26,7 @@ When your lives run out, the curtain falls. Check your final score, share it wit
 - **Computer:** move with the ← → arrow keys or A / D. You can also click and drag.
 - **Phone or tablet:** drag your finger left and right.
 - **Start or play again:** tap the screen, or press Enter or Space.
-- **Share your score:** tap **Share Score** on the game-over screen, or press S.
+- **Share your score:** tap **Share Score** on the game-over screen, or press S. Your score and the game link are copied to the clipboard, ready to paste anywhere.
 - **Mute or unmute:** tap the speaker icon, or press M.
 
 ## Features
@@ -38,8 +38,9 @@ When your lives run out, the curtain falls. Check your final score, share it wit
 - Streak bonuses for consecutive correct catches
 - Automatic difficulty progression, with faster names as you level up
 - Sound effects for catches, mistakes, level-ups and game over, with a mute setting that’s remembered
+- Vibration feedback on phones for catches, mistakes, level-ups and game over
 - A personal best saved in your browser
-- A share button to challenge your friends
+- A share button that copies your score and the game link to the clipboard
 - Plays in your browser, with no download and no sign-up
 
 ## Great for

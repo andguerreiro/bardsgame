@@ -552,7 +552,12 @@ function tone(f,at,dur,type,vol,f2){
   g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol,t+.01);g.gain.exponentialRampToValueAtTime(.0001,t+dur);
   o.connect(g);g.connect(a.destination);o.start(t);o.stop(t+dur+.02);
 }
+function buzz(pattern){
+  try{if(navigator.vibrate)navigator.vibrate(pattern);}catch(e){}
+}
 function sfx(n){
+  const V={good:18,level:[25,35,25],bad:[55,40,55],miss:35,over:[90,60,140]};
+  if(V[n])buzz(V[n]);
   if(muted||!audio())return;
   try{
     if(n==='good'){const k=1+Math.min(s.streak,8)*.05;tone(660*k,0,.1,'square',.12);tone(990*k,.09,.18,'triangle',.16);}
@@ -826,9 +831,9 @@ function shareScore(){
   const text="I scored "+s.score+" points on Who Said It? — The Bard’s Game! Can you beat me?";
   const full=text+" "+SHARE_URL;
   const done=m=>{s.shareMsg=m;s.shareT=4;};
-  const fallback=()=>{const ta=document.createElement('textarea');ta.value=full;document.body.appendChild(ta);ta.select();let ok=false;try{ok=document.execCommand('copy')}catch(e){}ta.remove();done(ok?"SCORE COPIED! PASTE IT ANYWHERE.":"SHARE: ANDGUERREIRO.ITCH.IO/BARDSGAME");};
-  if(navigator.share){navigator.share({title:"Who Said It?",text:text,url:SHARE_URL}).catch(e=>{if(!e||e.name!=='AbortError')fallback();});return;}
-  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(full).then(()=>done("SCORE COPIED! PASTE IT ANYWHERE."),fallback);}
+  const copied=()=>{buzz(20);done("SCORE COPIED! PASTE IT ANYWHERE.");};
+  const fallback=()=>{const ta=document.createElement('textarea');ta.value=full;document.body.appendChild(ta);ta.select();let ok=false;try{ok=document.execCommand('copy')}catch(e){}ta.remove();if(ok)copied();else done("SHARE: ANDGUERREIRO.ITCH.IO/BARDSGAME");};
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(full).then(copied,fallback);}
   else fallback();
 }
 
