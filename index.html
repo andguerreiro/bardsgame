@@ -727,7 +727,6 @@ function drawQuote(){
     const y0=62;
     lines.forEach((l,i)=>drawText(l,W/2,y0+i*18,C.parchment,1,{align:'center'}));
     drawText("WHO SAID THIS?",W/2,118,C.gold,1,{align:'center'});
-    if(s.q[1])drawText(s.q[1].toUpperCase(),W-16,118,C.goldD,1,{align:'right'});
   }
 }
 function drawMsg(){

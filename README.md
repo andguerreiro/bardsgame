@@ -143,10 +143,10 @@ bardsgame/
 
 Everything lives in `index.html`. Look for these pieces near the top of the script:
 
-- **`Q`**: the list of quotes. Each entry has the format `[quote, act, character, play]`. The act is shown at the bottom right of the quote panel. Example:
+- **`Q`**: the list of quotes. Each entry has the format `[quote, character, play]`. Example:
 
   ```js
-  ["Brevity is the soul of wit.", "Act 2, Scene 2", "Polonius", "Hamlet"]
+  ["Brevity is the soul of wit.", "Polonius", "Hamlet"]
   ```
 
 - **`POOL`**: every character name that can fall. The `character` of each quote must also appear here, spelled exactly the same way.
