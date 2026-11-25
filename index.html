@@ -466,66 +466,66 @@ function drawButton(x,y,w,h,label,color,accent,fill,fill2){
 
 /* ---------- game data ---------- */
 const Q=[
-["To be, or not to be, that is the question.","Act 3, Scene 1","Hamlet","Hamlet"],
-["All the world's a stage, and all the men and women merely players.","Act 2, Scene 7","Jaques","As You Like It"],
-["What's in a name? That which we call a rose by any other name would smell as sweet.","Act 2, Scene 2","Juliet","Romeo and Juliet"],
-["The course of true love never did run smooth.","Act 1, Scene 1","Lysander","A Midsummer Night's Dream"],
-["Some are born great, some achieve greatness, and some have greatness thrust upon them.","Act 2, Scene 5","Malvolio","Twelfth Night"],
-["All that glisters is not gold.","Act 2, Scene 7","Prince of Morocco","The Merchant of Venice"],
-["The quality of mercy is not strained.","Act 4, Scene 1","Portia","The Merchant of Venice"],
-["We are such stuff as dreams are made on.","Act 4, Scene 1","Prospero","The Tempest"],
-["Brevity is the soul of wit.","Act 2, Scene 2","Polonius","Hamlet"],
-["The lady doth protest too much, methinks.","Act 3, Scene 2","Gertrude","Hamlet"],
-["Something is rotten in the state of Denmark.","Act 1, Scene 4","Marcellus","Hamlet"],
-["There is nothing either good or bad, but thinking makes it so.","Act 2, Scene 2","Hamlet","Hamlet"],
-["Good night, good night! Parting is such sweet sorrow.","Act 2, Scene 2","Juliet","Romeo and Juliet"],
-["A plague o' both your houses!","Act 3, Scene 1","Mercutio","Romeo and Juliet"],
-["But, soft! What light through yonder window breaks?","Act 2, Scene 2","Romeo","Romeo and Juliet"],
-["These violent delights have violent ends.","Act 2, Scene 6","Friar Laurence","Romeo and Juliet"],
-["Double, double toil and trouble; fire burn, and cauldron bubble.","Act 4, Scene 1","Three Witches","Macbeth"],
-["Out, damned spot! Out, I say!","Act 5, Scene 1","Lady Macbeth","Macbeth"],
-["Fair is foul, and foul is fair.","Act 1, Scene 1","Three Witches","Macbeth"],
-["What's done cannot be undone.","Act 5, Scene 1","Lady Macbeth","Macbeth"],
-["Life's but a walking shadow, a poor player.","Act 5, Scene 5","Macbeth","Macbeth"],
-["Friends, Romans, countrymen, lend me your ears.","Act 3, Scene 2","Mark Antony","Julius Caesar"],
-["Et tu, Brute? Then fall, Caesar!","Act 3, Scene 1","Julius Caesar","Julius Caesar"],
-["The fault, dear Brutus, is not in our stars, but in ourselves.","Act 1, Scene 2","Cassius","Julius Caesar"],
-["Cowards die many times before their deaths; the valiant never taste of death but once.","Act 2, Scene 2","Julius Caesar","Julius Caesar"],
-["Lord, what fools these mortals be!","Act 3, Scene 2","Puck","A Midsummer Night's Dream"],
-["Though she be but little, she is fierce.","Act 3, Scene 2","Helena","A Midsummer Night's Dream"],
-["Love looks not with the eyes, but with the mind.","Act 1, Scene 1","Helena","A Midsummer Night's Dream"],
-["O brave new world, that has such people in't!","Act 5, Scene 1","Miranda","The Tempest"],
-["If you prick us, do we not bleed?","Act 3, Scene 1","Shylock","The Merchant of Venice"],
-["How sharper than a serpent's tooth it is to have a thankless child!","Act 1, Scene 4","King Lear","King Lear"],
-["Nothing will come of nothing.","Act 1, Scene 1","King Lear","King Lear"],
-["Now is the winter of our discontent.","Act 1, Scene 1","Richard","Richard III"],
-["A horse! A horse! My kingdom for a horse!","Act 5, Scene 4","Richard","Richard III"],
-["If music be the food of love, play on.","Act 1, Scene 1","Orsino","Twelfth Night"],
-["Uneasy lies the head that wears a crown.","Act 3, Scene 1","King Henry IV","Henry IV, Part 2"],
-["We know what we are, but know not what we may be.","Act 4, Scene 5","Ophelia","Hamlet"],
-["The better part of valour is discretion.","Act 5, Scene 4","Falstaff","Henry IV, Part 1"],
-["Love all, trust a few, do wrong to none.","Act 1, Scene 1","Countess","All's Well That Ends Well"],
-["Our doubts are traitors, and make us lose the good we oft might win.","Act 1, Scene 4","Lucio","Measure for Measure"],
-["To thine own self be true.","Act 1, Scene 3","Polonius","Hamlet"],
-["Frailty, thy name is woman!","Act 1, Scene 2","Hamlet","Hamlet"],
-["Good night, sweet prince, and flights of angels sing thee to thy rest.","Act 5, Scene 2","Horatio","Hamlet"],
-["What's past is prologue.","Act 2, Scene 1","Antonio","The Tempest"],
-["Hell is empty and all the devils are here.","Act 1, Scene 2","Ariel","The Tempest"],
-["Misery acquaints a man with strange bedfellows.","Act 2, Scene 2","Trinculo","The Tempest"],
-["Out, out, brief candle!","Act 5, Scene 5","Macbeth","Macbeth"],
-["Is this a dagger which I see before me, the handle toward my hand?","Act 2, Scene 1","Macbeth","Macbeth"],
-["Beware the Ides of March.","Act 1, Scene 2","Soothsayer","Julius Caesar"],
-["Cry ‘Havoc!’ and let slip the dogs of war.","Act 3, Scene 1","Mark Antony","Julius Caesar"],
-["O, beware, my lord, of jealousy! It is the green-eyed monster which doth mock the meat it feeds on.","Act 3, Scene 3","Iago","Othello"],
-["Reputation, reputation, reputation! O, I have lost my reputation!","Act 2, Scene 3","Cassio","Othello"],
-["I am a man more sinned against than sinning.","Act 3, Scene 2","King Lear","King Lear"],
-["Ripeness is all.","Act 5, Scene 2","Edgar","King Lear"],
-["Love sought is good, but given unsought is better.","Act 3, Scene 1","Olivia","Twelfth Night"],
-["Sweet are the uses of adversity.","Act 2, Scene 1","Duke Senior","As You Like It"],
-["Once more unto the breach, dear friends, once more.","Act 3, Scene 1","King Henry V","Henry V"],
-["We few, we happy few, we band of brothers.","Act 4, Scene 3","King Henry V","Henry V"],
-["Age cannot wither her, nor custom stale her infinite variety.","Act 2, Scene 2","Enobarbus","Antony and Cleopatra"],
-["Why, then the world's mine oyster, which I with sword will open.","Act 2, Scene 2","Pistol","The Merry Wives of Windsor"]
+["To be, or not to be, that is the question.","Hamlet","Hamlet"],
+["All the world's a stage, and all the men and women merely players.","Jaques","As You Like It"],
+["What's in a name? That which we call a rose by any other name would smell as sweet.","Juliet","Romeo and Juliet"],
+["The course of true love never did run smooth.","Lysander","A Midsummer Night's Dream"],
+["Some are born great, some achieve greatness, and some have greatness thrust upon them.","Malvolio","Twelfth Night"],
+["All that glisters is not gold.","Prince of Morocco","The Merchant of Venice"],
+["The quality of mercy is not strained.","Portia","The Merchant of Venice"],
+["We are such stuff as dreams are made on.","Prospero","The Tempest"],
+["Brevity is the soul of wit.","Polonius","Hamlet"],
+["The lady doth protest too much, methinks.","Gertrude","Hamlet"],
+["Something is rotten in the state of Denmark.","Marcellus","Hamlet"],
+["There is nothing either good or bad, but thinking makes it so.","Hamlet","Hamlet"],
+["Good night, good night! Parting is such sweet sorrow.","Juliet","Romeo and Juliet"],
+["A plague o' both your houses!","Mercutio","Romeo and Juliet"],
+["But, soft! What light through yonder window breaks?","Romeo","Romeo and Juliet"],
+["These violent delights have violent ends.","Friar Laurence","Romeo and Juliet"],
+["Double, double toil and trouble; fire burn, and cauldron bubble.","Three Witches","Macbeth"],
+["Out, damned spot! Out, I say!","Lady Macbeth","Macbeth"],
+["Fair is foul, and foul is fair.","Three Witches","Macbeth"],
+["What's done cannot be undone.","Lady Macbeth","Macbeth"],
+["Life's but a walking shadow, a poor player.","Macbeth","Macbeth"],
+["Friends, Romans, countrymen, lend me your ears.","Mark Antony","Julius Caesar"],
+["Et tu, Brute? Then fall, Caesar!","Julius Caesar","Julius Caesar"],
+["The fault, dear Brutus, is not in our stars, but in ourselves.","Cassius","Julius Caesar"],
+["Cowards die many times before their deaths; the valiant never taste of death but once.","Julius Caesar","Julius Caesar"],
+["Lord, what fools these mortals be!","Puck","A Midsummer Night's Dream"],
+["Though she be but little, she is fierce.","Helena","A Midsummer Night's Dream"],
+["Love looks not with the eyes, but with the mind.","Helena","A Midsummer Night's Dream"],
+["O brave new world, that has such people in't!","Miranda","The Tempest"],
+["If you prick us, do we not bleed?","Shylock","The Merchant of Venice"],
+["How sharper than a serpent's tooth it is to have a thankless child!","King Lear","King Lear"],
+["Nothing will come of nothing.","King Lear","King Lear"],
+["Now is the winter of our discontent.","Richard","Richard III"],
+["A horse! A horse! My kingdom for a horse!","Richard","Richard III"],
+["If music be the food of love, play on.","Orsino","Twelfth Night"],
+["Uneasy lies the head that wears a crown.","King Henry IV","Henry IV, Part 2"],
+["We know what we are, but know not what we may be.","Ophelia","Hamlet"],
+["The better part of valour is discretion.","Falstaff","Henry IV, Part 1"],
+["Love all, trust a few, do wrong to none.","Countess","All's Well That Ends Well"],
+["Our doubts are traitors, and make us lose the good we oft might win.","Lucio","Measure for Measure"],
+["To thine own self be true.","Polonius","Hamlet"],
+["Frailty, thy name is woman!","Hamlet","Hamlet"],
+["Good night, sweet prince, and flights of angels sing thee to thy rest.","Horatio","Hamlet"],
+["What's past is prologue.","Antonio","The Tempest"],
+["Hell is empty and all the devils are here.","Ariel","The Tempest"],
+["Misery acquaints a man with strange bedfellows.","Trinculo","The Tempest"],
+["Out, out, brief candle!","Macbeth","Macbeth"],
+["Is this a dagger which I see before me, the handle toward my hand?","Macbeth","Macbeth"],
+["Beware the Ides of March.","Soothsayer","Julius Caesar"],
+["Cry ‘Havoc!’ and let slip the dogs of war.","Mark Antony","Julius Caesar"],
+["O, beware, my lord, of jealousy! It is the green-eyed monster which doth mock the meat it feeds on.","Iago","Othello"],
+["Reputation, reputation, reputation! O, I have lost my reputation!","Cassio","Othello"],
+["I am a man more sinned against than sinning.","King Lear","King Lear"],
+["Ripeness is all.","Edgar","King Lear"],
+["Love sought is good, but given unsought is better.","Olivia","Twelfth Night"],
+["Sweet are the uses of adversity.","Duke Senior","As You Like It"],
+["Once more unto the breach, dear friends, once more.","King Henry V","Henry V"],
+["We few, we happy few, we band of brothers.","King Henry V","Henry V"],
+["Age cannot wither her, nor custom stale her infinite variety.","Enobarbus","Antony and Cleopatra"],
+["Why, then the world's mine oyster, which I with sword will open.","Pistol","The Merry Wives of Windsor"]
 ];
 const POOL=["Hamlet","Ophelia","Polonius","Gertrude","Horatio","Marcellus","Macbeth","Lady Macbeth","Romeo","Juliet","Mercutio","Friar Laurence","Lysander","Helena","Puck","Prospero","Ariel","Miranda","Antonio","Trinculo","Iago","Cassio","King Lear","Edgar","Shylock","Portia","Prince of Morocco","Julius Caesar","Mark Antony","Cassius","Soothsayer","Three Witches","Richard","Falstaff","King Henry IV","King Henry V","Malvolio","Orsino","Olivia","Jaques","Duke Senior","Enobarbus","Countess","Lucio","Pistol"];
 const COLORS=[C.bright,C.blue,C.pink,C.lime,C.purple,C.orange,C.teal];
@@ -592,7 +592,7 @@ function burst(x,y,color,n){
 }
 function pop(x,y,text,color){s.pops.push({x:x,y:y,text:text,c:color,life:.9,max:.9});}
 function spawn(){
-  const cur=s.q[2];
+  const cur=s.q[1];
   const hasCorrect=s.names.some(n=>n.text===cur&&n.y<FLOOR-80);
   const key=t=>t.replace("Lady ","");
   const onScreen=s.names.map(n=>key(n.text));
@@ -649,13 +649,13 @@ function update(dt){
     const n=s.names[i];n.y+=n.v*dt;
     if(hit(n)){
       s.names.splice(i,1);
-      if(n.text===s.q[2]){
+      if(n.text===s.q[1]){
         s.streak++;s.hits++;
         const pts=10+Math.min(s.streak,10)*2;
         s.score+=pts;
         burst(n.x,n.y+n.len*.5,C.bright,10);
         pop(n.x,n.y+n.len*.5,'+'+pts,C.bright);
-        flash("✓ "+n.text.toUpperCase()+" — "+(PLAYS[s.q[3]]||s.q[3]).toUpperCase(),C.green);
+        flash("✓ "+n.text.toUpperCase()+" — "+(PLAYS[s.q[2]]||s.q[2]).toUpperCase(),C.green);
         if(s.hits%4===0)s.level++;
         sfx(s.hits%4===0?'level':'good');
         nextQuote();
@@ -665,7 +665,7 @@ function update(dt){
       }
     }else if(n.y>FLOOR){
       s.names.splice(i,1);
-      if(n.text===s.q[2]){loseLife(n.text.toUpperCase()+" GOT AWAY!",false);if(s.mode==='play')nextQuote();}
+      if(n.text===s.q[1]){loseLife(n.text.toUpperCase()+" GOT AWAY!",false);if(s.mode==='play')nextQuote();}
     }
   }
 }
