@@ -533,7 +533,7 @@ const DIFF={easy:{label:"EASY",lives:10,speed:.65},normal:{label:"NORMAL",lives:
 const PLAYS={"Romeu e Julieta":"Romeo and Juliet","Ricardo III":"Richard III","Júlio César":"Julius Caesar","O Mercador de Veneza":"The Merchant of Venice","Sonho de uma Noite de Verão":"A Midsummer Night’s Dream","A Tempestade":"The Tempest","Otelo":"Othello","Rei Lear":"King Lear"};
 const stage=()=>s.hits<5?'easy':s.hits<12?'normal':'hard';
 
-let s={mode:'menu',score:0,lives:10,level:1,streak:0,hits:0,names:[],px:W/2,target:null,q:null,bag:[],spawn:0,msg:null,t:0,best:0,moving:false,parts:[],pops:[],shake:0,shareMsg:null,shareT:0,qAge:0};
+let s={mode:'menu',score:0,lives:10,level:1,streak:0,hits:0,names:[],px:W/2,vx:0,target:null,q:null,bag:[],spawn:0,msg:null,t:0,best:0,moving:false,parts:[],pops:[],shake:0,shareMsg:null,shareT:0,qAge:0};
 try{s.best=+localStorage.getItem('bardBest')||0}catch(e){}
 const keys={};
 let paused=false;
@@ -580,7 +580,8 @@ function nextQuote(){
 }
 function start(){
   sfx('start');
-  Object.assign(s,{mode:'play',score:0,lives:10,level:1,streak:0,hits:0,names:[],px:W/2,target:null,spawn:.3,msg:null,parts:[],pops:[],shake:0,shareMsg:null,shareT:0,qAge:0});
+  Object.assign(s,{mode:'play',score:0,lives:10,level:1,streak:0,hits:0,names:[],px:W/2,vx:0,target:null,spawn:.3,msg:null,parts:[],pops:[],shake:0,shareMsg:null,shareT:0,qAge:0});
+  hold=null;
   nextQuote();
 }
 function flash(text,color){s.msg={text:text,color:color,t:1.8};}
@@ -633,18 +634,31 @@ function update(dt){
   for(let i=s.pops.length-1;i>=0;i--){
     const p=s.pops[i];p.y-=26*dt;p.life-=dt;if(p.life<=0)s.pops.splice(i,1);
   }
-  if(s.mode!=='play'){hold=null;return;}
+  if(s.mode!=='play'){hold=null;s.vx=0;return;}
   if(hold)hold.t+=dt;
-  const sp=430;
-  let dir=(keys.ArrowRight||keys.d||keys.D?1:0)-(keys.ArrowLeft||keys.a||keys.A?1:0);
+  const keyDir=(keys.ArrowRight||keys.d||keys.D?1:0)-(keys.ArrowLeft||keys.a||keys.A?1:0);
+  const dir=keyDir||(hold?hold.dir:0);
   s.moving=false;
-  if(dir){s.px+=dir*sp*dt;s.target=null;s.moving=true;}
-  else if(hold&&hold.t>=HOLD_DELAY){s.px+=hold.dir*HOLD_SPEED*dt;s.moving=true;}
-  else if(s.target!==null){
+  if(dir){
+    s.vx+=dir*MOVE_ACC*dt;
+    s.vx=Math.max(-MOVE_MAX,Math.min(MOVE_MAX,s.vx));
+    s.target=null;s.moving=true;
+  }else if(s.target!==null){
     const d=s.target-s.px;
-    if(Math.abs(d)>3){s.px+=Math.sign(d)*Math.min(Math.abs(d),sp*1.45*dt);s.moving=true;}
+    if(Math.abs(d)>1.5){
+      const sp=Math.min(TARGET_MAX,Math.max(TARGET_MIN,Math.abs(d)*10));
+      s.px+=Math.sign(d)*Math.min(Math.abs(d),sp*dt);
+      s.moving=true;
+    }else{s.px=s.target;s.target=null;}
+    s.vx=0;
+  }else{
+    const dec=MOVE_DEC*dt;
+    s.vx=Math.abs(s.vx)<=dec?0:s.vx-Math.sign(s.vx)*dec;
+    s.moving=Math.abs(s.vx)>20;
   }
-  s.px=Math.max(64,Math.min(W-64,s.px));
+  s.px+=s.vx*dt;
+  if(s.px<64){s.px=64;if(s.vx<0)s.vx=0;}
+  else if(s.px>W-64){s.px=W-64;if(s.vx>0)s.vx=0;}
   s.spawn-=dt;s.qAge+=dt;
   if(s.spawn<=0){if(s.names.length<(s.hits<12?4:5))spawn();s.spawn=Math.max(.8,1.7-s.level*.07)*(.7+Math.random()*.6);}
   for(let i=s.names.length-1;i>=0&&s.mode==='play';i--){
@@ -846,7 +860,9 @@ function shareScore(){
 }
 
 /* ---------- input ---------- */
-const TAP_STEP=40,HOLD_DELAY=.15,HOLD_SPEED=520;
+const MOVE_MAX=560,MOVE_ACC=6800,MOVE_DEC=9000;
+const TAP_BOOST=200,TAP_STEP=56,TAP_TIME=.26;
+const TARGET_MIN=260,TARGET_MAX=800;
 let hold=null;
 function pointerPos(e){
   const r=cv.getBoundingClientRect();
@@ -858,8 +874,15 @@ function inRect(e,r){
 }
 function endHold(e){
   if(!hold||e.pointerId!==hold.id)return;
-  if(hold.t>=HOLD_DELAY)s.target=null;
-  hold=null;
+  const h=hold;hold=null;
+  const traveled=(s.px-h.startX)*h.dir;
+  if(h.t<TAP_TIME&&traveled<TAP_STEP){
+    s.target=Math.max(64,Math.min(W-64,h.startX+h.dir*TAP_STEP));
+    s.vx=0;
+  }else s.target=null;
+}
+function cancelHold(e){
+  if(hold&&e.pointerId===hold.id)hold=null;
 }
 addEventListener('keydown',e=>{
   keys[e.key]=true;
@@ -871,6 +894,7 @@ addEventListener('keydown',e=>{
 });
 addEventListener('keyup',e=>{keys[e.key]=false});
 addEventListener('blur',()=>{hold=null;s.target=null;});
+document.addEventListener('visibilitychange',()=>{if(document.hidden){hold=null;s.target=null;}});
 cv.addEventListener('pointerdown',e=>{
   if(inRect(e,MUTE)){toggleMute();return;}
   if(s.mode==='menu'){start();return;}
@@ -881,13 +905,15 @@ cv.addEventListener('pointerdown',e=>{
   }
   if(hold)return;
   const p=pointerPos(e);
-  cv.setPointerCapture(e.pointerId);
-  hold={id:e.pointerId,dir:p.x<W/2?-1:1,t:0};
-  s.target=Math.max(64,Math.min(W-64,s.px+hold.dir*TAP_STEP));
+  try{cv.setPointerCapture(e.pointerId);}catch(err){}
+  hold={id:e.pointerId,dir:p.x<W/2?-1:1,t:0,startX:s.px};
+  s.target=null;
+  if(s.vx*hold.dir<TAP_BOOST)s.vx=hold.dir*TAP_BOOST;
   s.moving=true;
 });
 cv.addEventListener('pointerup',endHold);
-cv.addEventListener('pointercancel',endHold);
+cv.addEventListener('pointercancel',cancelHold);
+cv.addEventListener('lostpointercapture',cancelHold);
 
 /* ---------- main loop ---------- */
 let last=performance.now();

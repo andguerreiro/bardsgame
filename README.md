@@ -77,7 +77,7 @@ These counts are cumulative, not a streak: mistakes do not reduce your level or 
 | Share score (game over)      | `S`                         | Tap **Share Score**     |
 | Start / replay               | `Enter` or `Space`          | Tap anywhere on the title screen, or **Play Again** |
 
-On a phone or tablet, tap the left or right half of the screen to take a small step. Keep your finger down and Shakespeare runs in that direction without stopping until he reaches the edge. The corner arrows light up while you hold.
+On a phone or tablet, tap the left or right half of the screen to take a small step — every tap moves him. Keep your finger down and Shakespeare accelerates smoothly and runs in that direction without stopping until he reaches the edge. The corner arrows light up while you hold.
 
 The game works on desktop and mobile browsers.
 
@@ -91,7 +91,7 @@ The game works on desktop and mobile browsers.
 - Streak bonuses and a level system
 - Sound effects for catches, mistakes, level-ups and game over, with a mute button (your choice is remembered)
 - Vibration feedback on phones for catches, mistakes, level-ups and game over
-- Tap-to-nudge and hold-to-run touch controls, with corner hints on the stage
+- Tap-to-nudge and hold-to-run touch controls with smooth acceleration and corner hints
 - Local best score (stored with `localStorage`)
 - Installable as an app on phones and desktops, with offline play
 - A **Share Score** button on the game-over screen that copies your score and the game link to the clipboard
