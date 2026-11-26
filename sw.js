@@ -1,6 +1,6 @@
 // Service worker for "Who Said It?": lets the game be installed and played offline.
 // Bump CACHE when you publish a new version so players get the update.
-const CACHE = 'bardsgame-v2.2.1';
+const CACHE = 'bardsgame-v2.2.0';
 const FILES = ['./', 'index.html', 'manifest.json', 'favicon.ico', 'icons/favicon.png', 'icons/favicon-180.png', 'icons/icon-192.png', 'icons/icon-512.png', 'icons/icon-maskable-512.png'];
 
 self.addEventListener('install', (e) => {

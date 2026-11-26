@@ -72,12 +72,12 @@ These counts are cumulative, not a streak: mistakes do not reduce your level or 
 
 | Action                       | Keyboard                    | Mouse / Touch           |
 | ---------------------------- | --------------------------- | ----------------------- |
-| Move                         | `←` `→` or `A` `D`          | Tap a side to nudge; hold the left or right side to run that way |
+| Move                         | `←` `→` or `A` `D`          | Tap a side to nudge; hold a side to run; press both sides to stop |
 | Mute / unmute sound          | `M`                         | Tap the speaker icon    |
 | Share score (game over)      | `S`                         | Tap **Share Score**     |
 | Start / replay               | `Enter` or `Space`          | Tap anywhere on the title screen, or **Play Again** |
 
-On a phone or tablet, tap the left or right half of the screen to take a small step — every tap moves him. Keep your finger down and Shakespeare accelerates smoothly and runs in that direction without stopping until he reaches the edge. The corner arrows light up while you hold.
+On a phone or tablet, tap the left or right half of the screen to take a small step — every tap moves him. Keep your finger down and Shakespeare accelerates smoothly and runs in that direction without stopping until he reaches the edge. Press both sides at the same time to stop him in place. The corner arrows light up while you hold, and both light up when you press both sides.
 
 The game works on desktop and mobile browsers.
 

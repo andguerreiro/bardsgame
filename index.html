@@ -581,7 +581,7 @@ function nextQuote(){
 function start(){
   sfx('start');
   Object.assign(s,{mode:'play',score:0,lives:10,level:1,streak:0,hits:0,names:[],px:W/2,vx:0,target:null,spawn:.3,msg:null,parts:[],pops:[],shake:0,shareMsg:null,shareT:0,qAge:0});
-  hold=null;
+  holds.clear();
   nextQuote();
 }
 function flash(text,color){s.msg={text:text,color:color,t:1.8};}
@@ -634,18 +634,25 @@ function update(dt){
   for(let i=s.pops.length-1;i>=0;i--){
     const p=s.pops[i];p.y-=26*dt;p.life-=dt;if(p.life<=0)s.pops.splice(i,1);
   }
-  if(s.mode!=='play'){hold=null;s.vx=0;return;}
+  if(s.mode!=='play'){holds.clear();s.vx=0;return;}
   const keyDir=(keys.ArrowRight||keys.d||keys.D?1:0)-(keys.ArrowLeft||keys.a||keys.A?1:0);
-  const dir=keyDir||(hold?hold.dir:0);
+  const dir=Math.max(-1,Math.min(1,keyDir+touchDir()));
+  const tapHold=holds.size===1?holds.values().next().value:null;
+  const tapTarget=tapHold?Math.max(64,Math.min(W-64,tapHold.startX+tapHold.dir*TAP_STEP)):0;
+  const tapPhase=!keyDir&&tapHold&&tapHold.tap&&(tapHold.dir>0?s.px<tapTarget-.5:s.px>tapTarget+.5);
+  const anyInput=keyDir!==0||holds.size>0;
   s.moving=false;
-  const tapTarget=hold?Math.max(64,Math.min(W-64,hold.startX+hold.dir*TAP_STEP)):0;
-  const tapPhase=!keyDir&&hold&&(hold.dir>0?s.px<tapTarget-.5:s.px>tapTarget+.5);
   if(tapPhase){
-    s.vx=hold.dir*TAP_SPEED;s.moving=true;
-  }else if(dir){
+    s.vx=tapHold.dir*TAP_SPEED;s.moving=true;
+  }else if(dir!==0){
     s.vx+=dir*MOVE_ACC*dt;
     s.vx=Math.max(-MOVE_MAX,Math.min(MOVE_MAX,s.vx));
     s.target=null;s.moving=true;
+  }else if(anyInput){
+    s.target=null;
+    const dec=MOVE_DEC*dt;
+    s.vx=Math.abs(s.vx)<=dec?0:s.vx-Math.sign(s.vx)*dec;
+    s.moving=Math.abs(s.vx)>20;
   }else if(s.target!==null){
     const d=s.target-s.px;
     if(Math.abs(d)>1.5){
@@ -660,7 +667,7 @@ function update(dt){
     s.moving=Math.abs(s.vx)>20;
   }
   s.px+=s.vx*dt;
-  if(tapPhase&&((hold.dir>0&&s.px>tapTarget)||(hold.dir<0&&s.px<tapTarget)))s.px=tapTarget;
+  if(tapPhase&&((tapHold.dir>0&&s.px>tapTarget)||(tapHold.dir<0&&s.px<tapTarget)))s.px=tapTarget;
   if(s.px<64){s.px=64;if(s.vx<0)s.vx=0;}
   else if(s.px>W-64){s.px=W-64;if(s.vx>0)s.vx=0;}
   s.spawn-=dt;s.qAge+=dt;
@@ -775,7 +782,8 @@ function drawMute(){
   }
 }
 function drawHints(){
-  const aL=hold&&hold.dir<0?1:.28,aR=hold&&hold.dir>0?1:.28;
+  const d=touchDir(),both=holds.size>1;
+  const aL=both||d<0?1:.28,aR=both||d>0?1:.28;
   drawText("←",14,770,C.gold,2,{alpha:aL});
   drawText("→",W-34,770,C.gold,2,{alpha:aR});
 }
@@ -799,9 +807,10 @@ function drawMenu(){
     ["A WRONG NAME OR A MISSED CATCH",C.parchment],
     ["COSTS A LIFE.",C.pink],
     ["MOVE: ← →  /  A D  /  HOLD A SIDE",C.gold],
-    ["TAP TO NUDGE · HOLD TO RUN",C.goldD]
+    ["TAP TO NUDGE · HOLD TO RUN",C.goldD],
+    ["BOTH SIDES TO STOP",C.goldD]
   ];
-  lines.forEach((l,i)=>drawText(l[0],W/2,220+i*21,l[1],1,{align:'center'}));
+  lines.forEach((l,i)=>drawText(l[0],W/2,220+i*18,l[1],1,{align:'center'}));
   drawButton(BTN_PLAY.x,BTN_PLAY.y,BTN_PLAY.w,BTN_PLAY.h,"PLAY",C.bright,C.redL);
   drawText("TAP ANYWHERE OR PRESS ENTER",W/2,480,C.gold,1,{align:'center'});
   drawText("10 LIVES · 60 QUOTES · 45 CHARACTERS",W/2,502,C.parchD,1,{align:'center'});
@@ -865,9 +874,9 @@ function shareScore(){
 
 /* ---------- input ---------- */
 const MOVE_MAX=560,MOVE_ACC=6000,MOVE_DEC=9000;
-const TAP_BOOST=200,TAP_STEP=24,TAP_SPEED=200;
+const TAP_STEP=24,TAP_SPEED=200;
 const TARGET_MIN=180,TARGET_MAX=400;
-let hold=null;
+const holds=new Map();
 function pointerPos(e){
   const r=cv.getBoundingClientRect();
   return {x:(e.clientX-r.left)/r.width*W,y:(e.clientY-r.top)/r.height*H};
@@ -876,17 +885,29 @@ function inRect(e,r){
   const p=pointerPos(e);
   return p.x>=r.x&&p.x<=r.x+r.w&&p.y>=r.y&&p.y<=r.y+r.h;
 }
+function touchDir(){
+  let d=0;
+  for(const h of holds.values())d+=h.dir;
+  return Math.max(-1,Math.min(1,d));
+}
 function endHold(e){
-  if(!hold||e.pointerId!==hold.id)return;
-  const h=hold;hold=null;
-  const traveled=(s.px-h.startX)*h.dir;
-  if(traveled<TAP_STEP-.5){
-    s.target=Math.max(64,Math.min(W-64,h.startX+h.dir*TAP_STEP));
-    s.vx=0;
-  }else s.target=null;
+  const h=holds.get(e.pointerId);
+  if(!h)return;
+  holds.delete(e.pointerId);
+  if(h.tap&&holds.size===0){
+    const traveled=(s.px-h.startX)*h.dir;
+    if(traveled<TAP_STEP-.5){
+      s.target=Math.max(64,Math.min(W-64,h.startX+h.dir*TAP_STEP));
+      s.vx=0;
+      return;
+    }
+  }
+  s.target=null;
 }
 function cancelHold(e){
-  if(hold&&e.pointerId===hold.id)hold=null;
+  if(!holds.has(e.pointerId))return;
+  holds.delete(e.pointerId);
+  s.target=null;
 }
 addEventListener('keydown',e=>{
   keys[e.key]=true;
@@ -897,8 +918,8 @@ addEventListener('keydown',e=>{
   else if(s.mode==='over'&&(e.key==='s'||e.key==='S'))shareScore();
 });
 addEventListener('keyup',e=>{keys[e.key]=false});
-addEventListener('blur',()=>{hold=null;s.target=null;});
-document.addEventListener('visibilitychange',()=>{if(document.hidden){hold=null;s.target=null;}});
+addEventListener('blur',()=>{holds.clear();s.target=null;s.vx=0;});
+document.addEventListener('visibilitychange',()=>{if(document.hidden){holds.clear();s.target=null;s.vx=0;}});
 cv.addEventListener('pointerdown',e=>{
   if(inRect(e,MUTE)){toggleMute();return;}
   if(s.mode==='menu'){start();return;}
@@ -907,13 +928,17 @@ cv.addEventListener('pointerdown',e=>{
     if(inRect(e,BTN_REPLAY)){start();return;}
     return;
   }
-  if(hold)return;
+  if(holds.has(e.pointerId))return;
   const p=pointerPos(e);
+  const dir=p.x<W/2?-1:1;
+  for(const h of holds.values())if(h.dir===dir)return;
   try{cv.setPointerCapture(e.pointerId);}catch(err){}
-  hold={id:e.pointerId,dir:p.x<W/2?-1:1,startX:s.px};
+  holds.set(e.pointerId,{dir:dir,startX:s.px,tap:true});
   s.target=null;
-  if(s.vx*hold.dir<TAP_BOOST)s.vx=hold.dir*TAP_BOOST;
-  s.moving=true;
+  if(holds.size>1){
+    // Both sides held: stop, and don't turn either press into a tap step.
+    for(const h of holds.values()){h.tap=false;h.startX=s.px;}
+  }
 });
 cv.addEventListener('pointerup',endHold);
 cv.addEventListener('pointercancel',cancelHold);

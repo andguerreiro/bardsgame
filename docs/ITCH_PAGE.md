@@ -24,7 +24,7 @@ When your lives run out, the curtain falls. Check your final score, share it wit
 ## Controls
 
 - **Computer:** move with the ← → arrow keys or A / D.
-- **Phone or tablet:** tap the left or right side to take a small step — every tap moves him. Hold your finger on a side and Shakespeare accelerates smoothly and runs that way without stopping until he reaches the edge.
+- **Phone or tablet:** tap the left or right side to take a small step — every tap moves him. Hold your finger on a side and Shakespeare accelerates smoothly and runs that way without stopping until he reaches the edge. Press both sides at once to stop him in place.
 - **Start or play again:** tap the screen, or press Enter or Space.
 - **Share your score:** tap **Share Score** on the game-over screen, or press S. Your score and the game link are copied to the clipboard, ready to paste anywhere.
 - **Mute or unmute:** tap the speaker icon, or press M.
