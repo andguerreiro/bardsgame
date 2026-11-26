@@ -873,7 +873,7 @@ function shareScore(){
 }
 
 /* ---------- input ---------- */
-const MOVE_MAX=560,MOVE_ACC=6000,MOVE_DEC=9000;
+const MOVE_MAX=280,MOVE_ACC=3000,MOVE_DEC=4500;
 const holds=new Map();            // pointerId -> {dir,type}
 const pend={l:false,r:false};     // presses shorter than one frame
 function pointerPos(e){
@@ -885,19 +885,10 @@ function inRect(e,r){
   return p.x>=r.x&&p.x<=r.x+r.w&&p.y>=r.y&&p.y<=r.y+r.h;
 }
 function touchHeld(d){
-  for(const h of holds.values())if(h.dir===d&&performance.now()-h.started>=TAP_WINDOW)return true;
+  for(const h of holds.values())if(h.dir===d)return true;
   return false;
 }
-// A quick tap is a deliberate, fixed-size nudge; holding still uses continuous movement.
-const TAP_NUDGE=10,TAP_WINDOW=220;
-function endHold(e,allowNudge=false){
-  const h=holds.get(e.pointerId);
-  if(h&&allowNudge&&s.mode==='play'&&performance.now()-h.started<TAP_WINDOW){
-    s.px=Math.max(64,Math.min(W-64,s.px+h.dir*TAP_NUDGE));
-    s.vx=0;s.moving=false;
-  }
-  holds.delete(e.pointerId);
-}
+function endHold(e){holds.delete(e.pointerId);}
 function releaseAll(){
   holds.clear();pend.l=pend.r=false;
   for(const k in keys)keys[k]=false;
@@ -929,11 +920,12 @@ addEventListener('pointerdown',e=>{
   }
   const dir=pointerPos(e).x<W/2?-1:1;
   try{cv.setPointerCapture(e.pointerId);}catch(err){}
-  holds.set(e.pointerId,{dir:dir,type:e.pointerType,started:performance.now()});
+  holds.set(e.pointerId,{dir:dir,type:e.pointerType});
+  if(dir<0)pend.l=true;else pend.r=true;
 });
-addEventListener('pointerup',e=>endHold(e,true));
-addEventListener('pointercancel',e=>endHold(e,false));
-cv.addEventListener('lostpointercapture',e=>endHold(e,false));
+addEventListener('pointerup',endHold);
+addEventListener('pointercancel',endHold);
+cv.addEventListener('lostpointercapture',endHold);
 // Safety nets: if the browser ever drops a pointerup, no finger on screen means no held side.
 function clearTouchIfIdle(e){
   if(e.touches&&e.touches.length===0)for(const [id,h] of holds)if(h.type==='touch')holds.delete(id);
