@@ -889,7 +889,7 @@ function touchHeld(d){
   return false;
 }
 // A quick tap is a deliberate, fixed-size nudge; holding still uses continuous movement.
-const TAP_NUDGE=24,TAP_WINDOW=320;
+const TAP_NUDGE=5,TAP_WINDOW=220;
 function endHold(e,allowNudge=false){
   const h=holds.get(e.pointerId);
   if(h&&allowNudge&&s.mode==='play'&&performance.now()-h.started<TAP_WINDOW){
