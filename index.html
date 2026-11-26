@@ -26,7 +26,7 @@
 <title>Who Said It? — The Bard’s Game</title>
 <style>
 :root{--bg:#120a0e;--fg:#f3e6c8;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-html,body{height:100%;margin:0;background:var(--bg);color:var(--fg);color-scheme:dark;font-family:ui-monospace,monospace;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;margin:0;touch-action:none;overscroll-behavior:none;-webkit-touch-callout:none;background:var(--bg);color:var(--fg);color-scheme:dark;font-family:ui-monospace,monospace;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent}
 body{display:flex;align-items:center;justify-content:center;overflow:hidden;height:100vh;height:100dvh}
 /* Keep the exact 3:4 proportion on any screen: fit inside the viewport, never stretch */
 canvas{--h:calc(100vh - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px));width:min(100vw,calc(var(--h) * .75));height:auto;aspect-ratio:3/4;flex:none;touch-action:none;display:block;background:#0b0508;image-rendering:pixelated;image-rendering:crisp-edges}
@@ -37,7 +37,7 @@ canvas{--h:calc(100vh - env(safe-area-inset-top,0px) - env(safe-area-inset-botto
 <canvas id="c"></canvas>
 <script>
 'use strict';
-const cv=document.getElementById('c'),ctx=cv.getContext('2d');
+const cv=document.getElementById('c'),ctx=cv.getContext('2d',{alpha:false,desynchronized:true})||cv.getContext('2d');
 const W=600,H=800,PANEL=140,FLOOR=H-16,PY=FLOOR-6,U=2;
 cv.width=W;cv.height=H;ctx.imageSmoothingEnabled=false;
 
@@ -278,20 +278,28 @@ const BARD=[
   ".......BBBBBB....BBBBBB......."
 ];
 const BP={H:'#6a4a30',S:'#f0c9a0',s:'#c98f78',E:'#1a0e12',N:'#d9a982',M:'#4a3222',R:'#f6f0e0',r:'#cfc4a6',K:'#2b2430',k:'#4a4058',G:'#f2c94c',W:'#ffffff',t:'#3a2a2a',B:'#120b0d'};
+const SPR={};
+function spriteImg(sc){
+  if(SPR[sc])return SPR[sc];
+  const c=document.createElement('canvas');c.width=BARD[0].length*sc;c.height=BARD.length*sc;
+  const g=c.getContext('2d');
+  for(let r=0;r<BARD.length;r++){
+    const row=BARD[r];
+    for(let k=0;k<row.length;k++){
+      const ch=row[k];if(ch==='.')continue;
+      g.fillStyle=BP[ch]||C.hair;
+      g.fillRect(k*sc,r*sc,sc,sc);
+    }
+  }
+  return SPR[sc]=c;
+}
 function drawBardSprite(g,cx,feet,sc,walk){
   const w=BARD[0].length*sc,h=BARD.length*sc;
   const bob=walk?sc:0;
   const x0=Math.round(cx-w/2),y0=Math.round(feet-h-bob);
   g.fillStyle='rgba(0,0,0,.38)';
   g.fillRect(Math.round(cx-w*.36),feet-3,Math.round(w*.72),6);
-  for(let r=0;r<BARD.length;r++){
-    const row=BARD[r];
-    for(let c=0;c<row.length;c++){
-      const ch=row[c];if(ch==='.')continue;
-      g.fillStyle=BP[ch]||C.hair;
-      g.fillRect(x0+c*sc,y0+r*sc,sc,sc);
-    }
-  }
+  g.drawImage(spriteImg(sc),x0,y0);
 }
 
 /* ---------- masks ---------- */
@@ -340,12 +348,19 @@ const MASK_TRAG=[
 "........OOOO........"
 ];
 function drawMask(g,map,x,y,sc){
-  const colors={W:C.cream,E:C.ink,O:C.goldD,N:C.parchD};
-  for(let r=0;r<map.length;r++)for(let c=0;c<map[r].length;c++){
-    const ch=map[r][c];if(ch==='.')continue;
-    g.fillStyle=colors[ch]||C.cream;
-    g.fillRect(x+c*sc,y+r*sc,sc,sc);
+  const store=map.__c||(map.__c={});
+  let img=store[sc];
+  if(!img){
+    const colors={W:C.cream,E:C.ink,O:C.goldD,N:C.parchD};
+    img=store[sc]=document.createElement('canvas');img.width=map[0].length*sc;img.height=map.length*sc;
+    const k=img.getContext('2d');
+    for(let r=0;r<map.length;r++)for(let c=0;c<map[r].length;c++){
+      const ch=map[r][c];if(ch==='.')continue;
+      k.fillStyle=colors[ch]||C.cream;
+      k.fillRect(c*sc,r*sc,sc,sc);
+    }
   }
+  g.drawImage(img,x,y);
 }
 
 /* ---------- static stage backdrop ---------- */
@@ -581,7 +596,7 @@ function nextQuote(){
 function start(){
   sfx('start');
   Object.assign(s,{mode:'play',score:0,lives:10,level:1,streak:0,hits:0,names:[],px:W/2,vx:0,target:null,spawn:.3,msg:null,parts:[],pops:[],shake:0,shareMsg:null,shareT:0,qAge:0});
-  holds.clear();
+  holds.clear();pend.l=pend.r=false;
   nextQuote();
 }
 function flash(text,color){s.msg={text:text,color:color,t:1.8};}
@@ -634,40 +649,24 @@ function update(dt){
   for(let i=s.pops.length-1;i>=0;i--){
     const p=s.pops[i];p.y-=26*dt;p.life-=dt;if(p.life<=0)s.pops.splice(i,1);
   }
-  if(s.mode!=='play'){holds.clear();s.vx=0;return;}
-  const keyDir=(keys.ArrowRight||keys.d||keys.D?1:0)-(keys.ArrowLeft||keys.a||keys.A?1:0);
-  const dir=Math.max(-1,Math.min(1,keyDir+touchDir()));
-  const tapHold=holds.size===1?holds.values().next().value:null;
-  const tapTarget=tapHold?Math.max(64,Math.min(W-64,tapHold.startX+tapHold.dir*TAP_STEP)):0;
-  const tapPhase=!keyDir&&tapHold&&tapHold.tap&&(tapHold.dir>0?s.px<tapTarget-.5:s.px>tapTarget+.5);
-  const anyInput=keyDir!==0||holds.size>0;
-  s.moving=false;
-  if(tapPhase){
-    s.vx=tapHold.dir*TAP_SPEED;s.moving=true;
-  }else if(dir!==0){
+  if(s.mode!=='play'){holds.clear();pend.l=pend.r=false;s.vx=0;return;}
+  // Keyboard and touch feed the very same input model: a side is either pressed or not.
+  // A press that starts and ends between two frames is latched (pend) so it still counts for one frame.
+  const left=!!(keys.arrowleft||keys.a||pend.l||touchHeld(-1));
+  const right=!!(keys.arrowright||keys.d||pend.r||touchHeld(1));
+  pend.l=pend.r=false;
+  const dir=(right?1:0)-(left?1:0);
+  s.target=null;
+  if(dir!==0){
     s.vx+=dir*MOVE_ACC*dt;
     s.vx=Math.max(-MOVE_MAX,Math.min(MOVE_MAX,s.vx));
-    s.target=null;s.moving=true;
-  }else if(anyInput){
-    s.target=null;
-    const dec=MOVE_DEC*dt;
-    s.vx=Math.abs(s.vx)<=dec?0:s.vx-Math.sign(s.vx)*dec;
-    s.moving=Math.abs(s.vx)>20;
-  }else if(s.target!==null){
-    const d=s.target-s.px;
-    if(Math.abs(d)>1.5){
-      const sp=Math.min(TARGET_MAX,Math.max(TARGET_MIN,Math.abs(d)*10));
-      s.px+=Math.sign(d)*Math.min(Math.abs(d),sp*dt);
-      s.moving=true;
-    }else{s.px=s.target;s.target=null;}
-    s.vx=0;
+    s.moving=true;
   }else{
     const dec=MOVE_DEC*dt;
     s.vx=Math.abs(s.vx)<=dec?0:s.vx-Math.sign(s.vx)*dec;
     s.moving=Math.abs(s.vx)>20;
   }
   s.px+=s.vx*dt;
-  if(tapPhase&&((tapHold.dir>0&&s.px>tapTarget)||(tapHold.dir<0&&s.px<tapTarget)))s.px=tapTarget;
   if(s.px<64){s.px=64;if(s.vx<0)s.vx=0;}
   else if(s.px>W-64){s.px=W-64;if(s.vx>0)s.vx=0;}
   s.spawn-=dt;s.qAge+=dt;
@@ -743,6 +742,7 @@ function drawHUD(){
   for(let i=0;i<10;i++)pixelHeart(W-186+i*12,18,i<s.lives);
   drawMute();
 }
+const QW={q:null,lines:null};
 function drawQuote(){
   R(0,56,W,80,C.bg0);
   R(0,56,W,U,C.goldD);R(0,134,W,U,C.goldD);
@@ -750,7 +750,8 @@ function drawQuote(){
   diamond(18,62,1,C.gold);diamond(W-18,62,1,C.gold);
   diamond(18,128,1,C.gold);diamond(W-18,128,1,C.gold);
   if(s.q&&s.mode==='play'){
-    const lines=wrapText("“"+s.q[0]+"”",548,1);
+    if(QW.q!==s.q){QW.q=s.q;QW.lines=wrapText("“"+s.q[0]+"”",548,1);}
+    const lines=QW.lines;
     const y0=62;
     lines.forEach((l,i)=>drawText(l,W/2,y0+i*18,C.parchment,1,{align:'center'}));
     drawText("WHO SAID THIS?",W/2,118,C.gold,1,{align:'center'});
@@ -782,8 +783,7 @@ function drawMute(){
   }
 }
 function drawHints(){
-  const d=touchDir(),both=holds.size>1;
-  const aL=both||d<0?1:.28,aR=both||d>0?1:.28;
+  const aL=touchHeld(-1)?1:.28,aR=touchHeld(1)?1:.28;
   drawText("←",14,770,C.gold,2,{alpha:aL});
   drawText("→",W-34,770,C.gold,2,{alpha:aR});
 }
@@ -874,9 +874,8 @@ function shareScore(){
 
 /* ---------- input ---------- */
 const MOVE_MAX=560,MOVE_ACC=6000,MOVE_DEC=9000;
-const TAP_STEP=24,TAP_SPEED=200;
-const TARGET_MIN=180,TARGET_MAX=400;
-const holds=new Map();
+const holds=new Map();            // pointerId -> {dir,type}
+const pend={l:false,r:false};     // presses shorter than one frame
 function pointerPos(e){
   const r=cv.getBoundingClientRect();
   return {x:(e.clientX-r.left)/r.width*W,y:(e.clientY-r.top)/r.height*H};
@@ -885,42 +884,33 @@ function inRect(e,r){
   const p=pointerPos(e);
   return p.x>=r.x&&p.x<=r.x+r.w&&p.y>=r.y&&p.y<=r.y+r.h;
 }
-function touchDir(){
-  let d=0;
-  for(const h of holds.values())d+=h.dir;
-  return Math.max(-1,Math.min(1,d));
+function touchHeld(d){
+  for(const h of holds.values())if(h.dir===d)return true;
+  return false;
 }
-function endHold(e){
-  const h=holds.get(e.pointerId);
-  if(!h)return;
-  holds.delete(e.pointerId);
-  if(h.tap&&holds.size===0){
-    const traveled=(s.px-h.startX)*h.dir;
-    if(traveled<TAP_STEP-.5){
-      s.target=Math.max(64,Math.min(W-64,h.startX+h.dir*TAP_STEP));
-      s.vx=0;
-      return;
-    }
-  }
-  s.target=null;
+function endHold(e){holds.delete(e.pointerId);}
+function releaseAll(){
+  holds.clear();pend.l=pend.r=false;
+  for(const k in keys)keys[k]=false;
+  s.target=null;s.vx=0;
 }
-function cancelHold(e){
-  if(!holds.has(e.pointerId))return;
-  holds.delete(e.pointerId);
-  s.target=null;
-}
+const MOVE_KEYS={arrowleft:1,arrowright:1,a:1,d:1};
 addEventListener('keydown',e=>{
-  keys[e.key]=true;
-  if(e.key==='m'||e.key==='M')toggleMute();
-  if(["ArrowLeft","ArrowRight"," "].includes(e.key))e.preventDefault();
+  const k=(e.key||'').toLowerCase();
+  keys[k]=true;
+  if(!e.repeat&&MOVE_KEYS[k]){if(k==='arrowleft'||k==='a')pend.l=true;else pend.r=true;}
+  if(k==='m')toggleMute();
+  if(e.key==="ArrowLeft"||e.key==="ArrowRight"||e.key===" ")e.preventDefault();
   if(s.mode==='menu'&&(e.key==='Enter'||e.key===' '))start();
   else if(s.mode==='over'&&(e.key==='Enter'||e.key===' '))start();
-  else if(s.mode==='over'&&(e.key==='s'||e.key==='S'))shareScore();
+  else if(s.mode==='over'&&k==='s')shareScore();
 });
-addEventListener('keyup',e=>{keys[e.key]=false});
-addEventListener('blur',()=>{holds.clear();s.target=null;s.vx=0;});
-document.addEventListener('visibilitychange',()=>{if(document.hidden){holds.clear();s.target=null;s.vx=0;}});
-cv.addEventListener('pointerdown',e=>{
+addEventListener('keyup',e=>{keys[(e.key||'').toLowerCase()]=false});
+addEventListener('blur',releaseAll);
+document.addEventListener('visibilitychange',()=>{if(document.hidden)releaseAll();});
+// The listener lives on the window, so taps on the black bars around the canvas count too.
+addEventListener('pointerdown',e=>{
+  if(e.pointerType==='mouse'&&e.button!==0)return;
   if(inRect(e,MUTE)){toggleMute();return;}
   if(s.mode==='menu'){start();return;}
   if(s.mode==='over'){
@@ -928,21 +918,23 @@ cv.addEventListener('pointerdown',e=>{
     if(inRect(e,BTN_REPLAY)){start();return;}
     return;
   }
-  if(holds.has(e.pointerId))return;
-  const p=pointerPos(e);
-  const dir=p.x<W/2?-1:1;
-  for(const h of holds.values())if(h.dir===dir)return;
+  const dir=pointerPos(e).x<W/2?-1:1;
   try{cv.setPointerCapture(e.pointerId);}catch(err){}
-  holds.set(e.pointerId,{dir:dir,startX:s.px,tap:true});
-  s.target=null;
-  if(holds.size>1){
-    // Both sides held: stop, and don't turn either press into a tap step.
-    for(const h of holds.values()){h.tap=false;h.startX=s.px;}
-  }
+  holds.set(e.pointerId,{dir:dir,type:e.pointerType});
+  if(dir<0)pend.l=true;else pend.r=true;
 });
-cv.addEventListener('pointerup',endHold);
-cv.addEventListener('pointercancel',cancelHold);
-cv.addEventListener('lostpointercapture',cancelHold);
+addEventListener('pointerup',endHold);
+addEventListener('pointercancel',endHold);
+cv.addEventListener('lostpointercapture',endHold);
+// Safety nets: if the browser ever drops a pointerup, no finger on screen means no held side.
+function clearTouchIfIdle(e){
+  if(e.touches&&e.touches.length===0)for(const [id,h] of holds)if(h.type==='touch')holds.delete(id);
+}
+addEventListener('touchend',clearTouchIfIdle,{passive:true});
+addEventListener('touchcancel',clearTouchIfIdle,{passive:true});
+addEventListener('touchmove',e=>e.preventDefault(),{passive:false});
+addEventListener('gesturestart',e=>e.preventDefault());
+addEventListener('contextmenu',e=>e.preventDefault());
 
 /* ---------- main loop ---------- */
 let last=performance.now();
