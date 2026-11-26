@@ -77,7 +77,7 @@ These counts are cumulative, not a streak: mistakes do not reduce your level or 
 | Share score (game over)      | `S`                         | Tap **Share Score**     |
 | Start / replay               | `Enter` or `Space`          | Tap anywhere on the title screen, or **Play Again** |
 
-On a phone or tablet, tap the left or right half of the screen to take a small step — every tap moves him. Keep your finger down and Shakespeare accelerates smoothly and runs in that direction without stopping until he reaches the edge. Press both sides at the same time to stop him in place. The corner arrows light up while you hold, and both light up when you press both sides.
+On a phone or tablet, touch works like the arrow keys. Tap the left or right half of the screen to nudge Shakespeare (a longer press moves him farther, and every tap moves him). Keep your finger down and he accelerates smoothly and runs in that direction until you let go or he reaches the edge. Press both sides at the same time to stop him in place. Taps count anywhere on the screen, including the empty bars around the game in landscape. The corner arrows light up while you hold, and both light up when you press both sides.
 
 The game works on desktop and mobile browsers.
 
@@ -91,7 +91,7 @@ The game works on desktop and mobile browsers.
 - Streak bonuses and a level system
 - Sound effects for catches, mistakes, level-ups and game over, with a mute button (your choice is remembered)
 - Vibration feedback on phones for catches, mistakes, level-ups and game over
-- Tap-to-nudge and hold-to-run touch controls with smooth acceleration and corner hints
+- Tap-to-nudge and hold-to-run touch controls that move exactly like the keyboard, with smooth acceleration and corner hints
 - Local best score (stored with `localStorage`)
 - Installable as an app on phones and desktops, with offline play
 - A **Share Score** button on the game-over screen that copies your score and the game link to the clipboard
@@ -154,7 +154,7 @@ Everything lives in `index.html`. Look for these pieces near the top of the scri
 
 - **`POOL`**: every character name that can fall. The `character` of each quote must also appear here, spelled exactly the same way.
 - **`DIFF`** and **`stage()`**: the speed multiplier of each stage and the number of correct catches that trigger Normal (5) and Hard (12). Tweak these to rebalance the game.
-- **`PLAYS`**: maps stored play names to the display names shown after a correct catch. Play names that are not in this map are shown as written.
+- **`PLAYS`**: maps alternative play titles (currently Portuguese ones) to the English names shown after a correct catch. The built-in quotes already use English titles, so it only matters if you add entries with other titles. Titles that are not in this map are shown as written.
 - **`SHARE_URL`** and **`shareScore()`**: the link and message used by the share button on the game-over screen.
 - **`FS`**, **`FONT`** and **`textImage()`**: the 5×7 bitmap font. Add a glyph to `FS` (seven rows of five `0`/`1` bits) if you add text with a new symbol.
 - **`BARD`** and **`BP`**: the Shakespeare sprite, drawn as a character map plus a palette. **`C`** is the full pixel-art palette.
