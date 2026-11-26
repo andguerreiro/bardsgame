@@ -57,6 +57,8 @@ AI tools were used throughout this project. Several AI assistants helped with th
 
 The quotes are from the works of William Shakespeare, which are in the public domain.
 
-Play also at [bardsgame.pages.dev](https://bardsgame.pages.dev) · Source code at [github.com/andguerreiro/bardsgame](https://github.com/andguerreiro/bardsgame)
+Play also at [bardsgame.pages.dev](https://bardsgame.pages.dev) 
+
+Source code at [github.com/andguerreiro/bardsgame](https://github.com/andguerreiro/bardsgame)
 
 *All the world’s a stage. Catch the character. Dodge the rest.*
