@@ -635,11 +635,14 @@ function update(dt){
     const p=s.pops[i];p.y-=26*dt;p.life-=dt;if(p.life<=0)s.pops.splice(i,1);
   }
   if(s.mode!=='play'){hold=null;s.vx=0;return;}
-  if(hold)hold.t+=dt;
   const keyDir=(keys.ArrowRight||keys.d||keys.D?1:0)-(keys.ArrowLeft||keys.a||keys.A?1:0);
   const dir=keyDir||(hold?hold.dir:0);
   s.moving=false;
-  if(dir){
+  const tapTarget=hold?Math.max(64,Math.min(W-64,hold.startX+hold.dir*TAP_STEP)):0;
+  const tapPhase=!keyDir&&hold&&(hold.dir>0?s.px<tapTarget-.5:s.px>tapTarget+.5);
+  if(tapPhase){
+    s.vx=hold.dir*TAP_SPEED;s.moving=true;
+  }else if(dir){
     s.vx+=dir*MOVE_ACC*dt;
     s.vx=Math.max(-MOVE_MAX,Math.min(MOVE_MAX,s.vx));
     s.target=null;s.moving=true;
@@ -657,6 +660,7 @@ function update(dt){
     s.moving=Math.abs(s.vx)>20;
   }
   s.px+=s.vx*dt;
+  if(tapPhase&&((hold.dir>0&&s.px>tapTarget)||(hold.dir<0&&s.px<tapTarget)))s.px=tapTarget;
   if(s.px<64){s.px=64;if(s.vx<0)s.vx=0;}
   else if(s.px>W-64){s.px=W-64;if(s.vx>0)s.vx=0;}
   s.spawn-=dt;s.qAge+=dt;
@@ -860,9 +864,9 @@ function shareScore(){
 }
 
 /* ---------- input ---------- */
-const MOVE_MAX=560,MOVE_ACC=6800,MOVE_DEC=9000;
-const TAP_BOOST=200,TAP_STEP=56,TAP_TIME=.26;
-const TARGET_MIN=260,TARGET_MAX=800;
+const MOVE_MAX=560,MOVE_ACC=6000,MOVE_DEC=9000;
+const TAP_BOOST=200,TAP_STEP=24,TAP_SPEED=200;
+const TARGET_MIN=180,TARGET_MAX=400;
 let hold=null;
 function pointerPos(e){
   const r=cv.getBoundingClientRect();
@@ -876,7 +880,7 @@ function endHold(e){
   if(!hold||e.pointerId!==hold.id)return;
   const h=hold;hold=null;
   const traveled=(s.px-h.startX)*h.dir;
-  if(h.t<TAP_TIME&&traveled<TAP_STEP){
+  if(traveled<TAP_STEP-.5){
     s.target=Math.max(64,Math.min(W-64,h.startX+h.dir*TAP_STEP));
     s.vx=0;
   }else s.target=null;
@@ -906,7 +910,7 @@ cv.addEventListener('pointerdown',e=>{
   if(hold)return;
   const p=pointerPos(e);
   try{cv.setPointerCapture(e.pointerId);}catch(err){}
-  hold={id:e.pointerId,dir:p.x<W/2?-1:1,t:0,startX:s.px};
+  hold={id:e.pointerId,dir:p.x<W/2?-1:1,startX:s.px};
   s.target=null;
   if(s.vx*hold.dir<TAP_BOOST)s.vx=hold.dir*TAP_BOOST;
   s.moving=true;
