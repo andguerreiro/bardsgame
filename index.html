@@ -806,11 +806,9 @@ function drawMenu(){
     ["DODGE EVERYONE ELSE.",C.green],
     ["A WRONG NAME OR A MISSED CATCH",C.parchment],
     ["COSTS A LIFE.",C.pink],
-    ["MOVE: ← →  /  A D  /  HOLD A SIDE",C.gold],
-    ["TAP TO NUDGE · HOLD TO RUN",C.goldD],
-    ["BOTH SIDES TO STOP",C.goldD]
+    ["MOVE: ← →  /  A D  /  HOLD A SIDE",C.gold]
   ];
-  lines.forEach((l,i)=>drawText(l[0],W/2,220+i*18,l[1],1,{align:'center'}));
+  lines.forEach((l,i)=>drawText(l[0],W/2,240+i*18,l[1],1,{align:'center'}));
   drawButton(BTN_PLAY.x,BTN_PLAY.y,BTN_PLAY.w,BTN_PLAY.h,"PLAY",C.bright,C.redL);
   drawText("TAP ANYWHERE OR PRESS ENTER",W/2,480,C.gold,1,{align:'center'});
   drawText("10 LIVES · 60 QUOTES · 45 CHARACTERS",W/2,502,C.parchD,1,{align:'center'});
