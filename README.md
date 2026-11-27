@@ -72,7 +72,7 @@ These counts are cumulative, not a streak: mistakes do not reduce your level or 
 
 | Action                       | Keyboard                    | Mouse / Touch           |
 | ---------------------------- | --------------------------- | ----------------------- |
-| Move                         | `←` `→` or `A` `D`          | Tap a side to nudge; hold a side to run; press both sides to stop |
+| Move                         | `←` `→` or `A` `D`          | Tap or hold the left or right side of the screen |
 | Mute / unmute sound          | `M`                         | Tap the speaker icon    |
 | Share score (game over)      | `S`                         | Tap **Share Score**     |
 | Start / replay               | `Enter` or `Space`          | Tap anywhere on the title screen, or **Play Again** |
