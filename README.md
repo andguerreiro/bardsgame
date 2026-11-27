@@ -68,6 +68,19 @@ These counts are cumulative, not a streak: mistakes do not reduce your level or 
 - Wrong catches and misses reset your streak.
 - Level and difficulty progression use your total correct catches, separately from points and streak bonuses (see the table above).
 
+### Ranks
+
+When the game ends, you are given a rank based on your final score (not your level or total catches). It appears on the game-over screen:
+
+| Final score | Rank             |
+| ----------- | ---------------- |
+| 0–119       | Groundling       |
+| 120–249     | Player           |
+| 250–399     | Lord Chamberlain |
+| 400+        | The Bard Himself |
+
+The names come from the Elizabethan theatre: a groundling was a spectator standing in the pit, a player was an actor, and the Lord Chamberlain was the patron of Shakespeare’s company.
+
 ## Controls
 
 | Action                       | Keyboard                    | Mouse / Touch           |
