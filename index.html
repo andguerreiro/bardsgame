@@ -547,11 +547,14 @@ const COLORS=[C.bright,C.blue,C.pink,C.lime,C.purple,C.orange,C.teal];
 const DIFF={easy:{label:"EASY",lives:10,speed:.65},normal:{label:"NORMAL",lives:5,speed:1},hard:{label:"HARD",lives:2,speed:1.45}};
 const PLAYS={"Romeu e Julieta":"Romeo and Juliet","Ricardo III":"Richard III","Júlio César":"Julius Caesar","O Mercador de Veneza":"The Merchant of Venice","Sonho de uma Noite de Verão":"A Midsummer Night’s Dream","A Tempestade":"The Tempest","Otelo":"Othello","Rei Lear":"King Lear"};
 const stage=()=>s.hits<5?'easy':s.hits<12?'normal':'hard';
+/* Speed ramps smoothly with hits (no steps) and is capped; GAP is the minimum free lane between names that threaten the player at the same time. */
+const SPEED_START=.65,SPEED_STEP=.05,SPEED_MAXMUL=1.5,SPEED_CAP=440,GAP=100;
+const speedMul=()=>Math.min(SPEED_MAXMUL,SPEED_START+s.hits*SPEED_STEP);
 
 let s={mode:'menu',score:0,lives:10,level:1,streak:0,hits:0,names:[],px:W/2,vx:0,target:null,q:null,bag:[],spawn:0,msg:null,t:0,best:0,moving:false,parts:[],pops:[],shake:0,shareMsg:null,shareT:0,qAge:0};
 try{s.best=+localStorage.getItem('bardBest')||0}catch(e){}
 const keys={};
-let paused=false;
+let paused=false,catchingUp=false;
 
 /* ---------- audio ---------- */
 let AC=null,muted=false;
@@ -572,6 +575,7 @@ function buzz(pattern){
   try{if(navigator.vibrate)navigator.vibrate(pattern);}catch(e){}
 }
 function sfx(n){
+  if(catchingUp)return;   // silent while replaying time spent away from the tab
   const V={good:18,level:[25,35,25],bad:[55,40,55],miss:35,over:[90,60,140]};
   if(V[n])buzz(V[n]);
   if(muted||!audio())return;
@@ -590,7 +594,13 @@ function toggleMute(){muted=!muted;try{localStorage.setItem('bardMute',muted?'1'
 
 /* ---------- game logic ---------- */
 function nextQuote(){
-  if(!s.bag.length){s.bag=Q.map((_,i)=>i).sort(()=>Math.random()-.5);}
+  if(!s.bag.length){
+    const b=Q.map((_,i)=>i);
+    for(let i=b.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[b[i],b[j]]=[b[j],b[i]];}
+    // the deck is drawn with pop(): keep the quote just shown from coming up again right away
+    if(s.q&&Q[b[b.length-1]]===s.q){const k=Math.random()*(b.length-1)|0;[b[b.length-1],b[k]]=[b[k],b[b.length-1]];}
+    s.bag=b;
+  }
   s.q=Q[s.bag.pop()];s.qAge=0;
 }
 function start(){
@@ -612,21 +622,34 @@ function spawn(){
   const hasCorrect=s.names.some(n=>n.text===cur&&n.y<FLOOR-80);
   const key=t=>t.replace("Lady ","");
   const onScreen=s.names.map(n=>key(n.text));
+  // the right name never shows up before the player has had time to read the quote
+  const readTime=1.2+s.q[0].length*.015;
   let text;
-  if(((!hasCorrect&&s.qAge>3)||Math.random()<.22)&&!onScreen.includes(key(cur)))text=cur;
+  if(((!hasCorrect&&s.qAge>3)||(s.qAge>readTime&&Math.random()<.22))&&!onScreen.includes(key(cur)))text=cur;
   else{const opts=POOL.filter(p=>p!==cur&&!onScreen.includes(key(p)));text=opts[Math.random()*opts.length|0]}
   const len=textW(text,1);
-  let x=0;
-  for(let i=0;i<30;i++){
-    x=76+Math.random()*(W-152);
-    if(!s.names.some(n=>Math.abs(n.x-x)<44))break;
+  const v=Math.min(SPEED_CAP,(70+Math.random()*130+s.level*14)*speedMul());
+  // Window (seconds from now) in which this name can reach the player, compared with every name already falling.
+  const y0=PANEL+4,t0=(PY-120-y0-len)/v,t1=(PY-y0)/v;
+  const clash=n=>{const a0=Math.max(0,(PY-120-n.y-n.len)/n.v),a1=(PY-n.y)/n.v;return a0<t1&&t0<a1;};
+  const rivals=s.names.filter(clash);
+  let x=0,best=-1;
+  for(let i=0;i<40&&best<GAP;i++){
+    const cx=76+Math.random()*(W-152);
+    let d=1e9;for(const n of rivals)d=Math.min(d,Math.abs(n.x-cx));
+    if(d>best){best=d;x=cx;}
   }
-  const v=(70+Math.random()*130+s.level*14)*DIFF[stage()].speed;
-  s.names.push({text:text,x:x,y:PANEL+4,len:len,v:v,c:COLORS[Math.random()*COLORS.length|0]});
+  if(best<GAP)return false;   // no fair gap right now: the caller retries shortly
+  s.names.push({text:text,x:x,y:y0,len:len,v:v,c:COLORS[Math.random()*COLORS.length|0]});
+  return true;
 }
 function hit(n){
-  const px0=s.px-30,px1=s.px+30,py0=PY-120,py1=PY;
-  return n.x+14>px0&&n.x-14<px1&&n.y+n.len>py0&&n.y<py1;
+  if(n.y>=PY)return false;
+  const dx=Math.abs(n.x-s.px),bottom=n.y+n.len;
+  if(n.text===s.q[1])return dx<44&&bottom>PY-120;   // right name: generous box, easy to catch
+  // wrong names: follow the sprite silhouette (head ±12, hair ±30, robe ±40, plus half the name's thickness)
+  const top=dx<19?PY-108:dx<37?PY-93:dx<47?PY-48:Infinity;
+  return bottom>top;
 }
 function loseLife(txt,shake){
   s.lives--;s.streak=0;flash(txt,C.pink);sfx(txt[0]==='✗'?'bad':'miss');
@@ -670,7 +693,11 @@ function update(dt){
   if(s.px<64){s.px=64;if(s.vx<0)s.vx=0;}
   else if(s.px>W-64){s.px=W-64;if(s.vx>0)s.vx=0;}
   s.spawn-=dt;s.qAge+=dt;
-  if(s.spawn<=0){if(s.names.length<(s.hits<12?4:5))spawn();s.spawn=Math.max(.8,1.7-s.level*.07)*(.7+Math.random()*.6);}
+  if(s.spawn<=0){
+    const full=s.names.length>=(s.hits<12?4:5);
+    const placed=full||spawn()!==false;
+    s.spawn=placed?Math.max(.8,1.7-s.level*.07)*(.7+Math.random()*.6):.25;
+  }
   for(let i=s.names.length-1;i>=0&&s.mode==='play';i--){
     const n=s.names[i];n.y+=n.v*dt;
     if(hit(n)){
@@ -905,7 +932,23 @@ addEventListener('keydown',e=>{
 });
 addEventListener('keyup',e=>{keys[(e.key||'').toLowerCase()]=false});
 addEventListener('blur',releaseAll);
-document.addEventListener('visibilitychange',()=>{if(document.hidden)releaseAll();});
+/* Browsers stop animation frames in a hidden tab, which would act as a free pause (and a chance to look the answer up).
+   When the tab comes back, replay the missed time with the player standing still. */
+let hiddenAt=null;
+function catchUp(sec){
+  catchingUp=true;
+  const wasPlay=s.mode==='play';
+  for(let t=0;t<sec&&s.mode==='play';t+=1/30)update(1/30);
+  catchingUp=false;
+  if(wasPlay&&s.mode==='over')sfx('over');
+}
+document.addEventListener('visibilitychange',()=>{
+  if(document.hidden){releaseAll();hiddenAt=performance.now();}
+  else if(hiddenAt!==null){
+    const sec=Math.min(180,(performance.now()-hiddenAt)/1000);hiddenAt=null;
+    if(s.mode==='play'&&sec>.1)catchUp(sec);
+  }
+});
 // The listener lives on the window, so taps on the black bars around the canvas count too.
 addEventListener('pointerdown',e=>{
   if(e.pointerType==='mouse'&&e.button!==0)return;

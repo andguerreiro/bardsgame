@@ -41,26 +41,34 @@ You lose a life when you:
 
 When your lives run out, the curtain falls. Your best score is saved in your browser. On the game-over screen you can tap **Play Again**, or tap **Share Score** (or press `S`) to copy your score and the game link to the clipboard, ready to paste to friends anywhere.
 
+### Fair play
+
+The game is meant to be hard, not unfair:
+
+- **Time to read.** The right name never drops in right after a new quote appears. It only shows up once you have had a moment to read (longer quotes give you more time), and it is sent your way after a few seconds at most.
+- **Gaps to slip through.** Names that could reach Shakespeare at the same time are always spaced far enough apart to leave a gap you can fit through.
+- **Honest hit zones.** The right name has a generous catch zone. A wrong name only costs you a life when it actually touches Shakespeare’s head, hair or robe, so a near miss is a miss.
+- **No pause button.** The game never pauses. If you switch to another tab or app, the time you were away is replayed when you come back, with Shakespeare standing still, so leaving the game is no free pause (and no chance to look the answer up). Switching to another window while the tab stays visible doesn’t pause it either.
+
 ### Automatic difficulty
 
-There is no difficulty menu. Your total number of correct catches controls both your difficulty stage (Easy, Normal or Hard) and your level:
+There is no difficulty menu. The game gets harder on its own, based on your total number of correct catches, in two ways:
 
-| Total correct catches | Difficulty stage | Level |
-| --------------------- | ---------------- | ----- |
-| 0–3                   | Easy             | 1     |
-| 4                     | Easy             | 2     |
-| 5–7                   | Normal           | 2     |
-| 8–11                  | Normal           | 3     |
-| 12–15                 | Hard             | 4     |
-| 16–19                 | Hard             | 5     |
+- **Speed ramps up smoothly.** Every correct catch makes newly spawned names a little faster. Their speed is multiplied by ×0.65 at the start and rises in small steps to ×1.5 at 17 correct catches, with no sudden jumps. No name ever falls faster than a top speed of 440 game pixels per second.
+- **Levels.** A new level arrives every 4 correct catches (level = 1 + total catches ÷ 4, rounded down). Each level raises the base speed of newly spawned names and gradually shortens the interval between spawns, down to a minimum base interval.
 
-After that, the stage stays Hard, while the level keeps increasing every 4 correct catches: level 6 at 20, level 7 at 24, and so on.
+| Total correct catches | Level                          | Speed multiplier |
+| --------------------- | ------------------------------ | ---------------- |
+| 0–3                   | 1                              | ×0.65 to ×0.80   |
+| 4–7                   | 2                              | ×0.85 to ×1.00   |
+| 8–11                  | 3                              | ×1.05 to ×1.20   |
+| 12–15                 | 4                              | ×1.25 to ×1.40   |
+| 16–19                 | 5                              | ×1.45 to ×1.50   |
+| 20 and up             | 6 and up (+1 every 4 catches)  | ×1.50 (maximum)  |
 
-- The difficulty stage changes at 5 and 12 correct catches, giving newly spawned names an additional speed increase.
-- Every level increase also makes newly spawned names faster and gradually shortens the interval between spawns, down to a minimum base interval.
-- At 12 correct catches, both changes happen together: you enter Hard and reach level 4.
+From 12 correct catches on, up to 5 names can be on screen at once (up to 4 before that).
 
-These counts are cumulative, not a streak: mistakes do not reduce your level or difficulty stage. Your lives are not reset when either changes. Names already falling keep their current speed.
+These counts are cumulative, not a streak: mistakes do not reduce your level or speed. Your lives are not reset when the level changes. Names already falling keep their current speed.
 
 ### Scoring
 
@@ -99,7 +107,9 @@ The game works on desktop and mobile browsers.
 - **Complete pixel-art presentation**: a hand-built 5×7 bitmap font, a chunky Shakespeare sprite, theater curtains, a dithered spotlight, pixel UI panels, hearts, masks and particles
 - 60 of Shakespeare’s most famous quotes, from *Hamlet*, *Macbeth*, *Romeo and Juliet*, *Julius Caesar*, *King Lear*, *Othello*, *The Tempest*, *Twelfth Night*, *A Midsummer Night’s Dream*, *The Merchant of Venice*, *As You Like It*, *Richard III*, *Henry IV*, *Henry V*, *Antony and Cleopatra* and more
 - 45 characters to catch (or avoid)
-- Automatic difficulty ramp: Easy → Normal → Hard
+- A shuffled deck of quotes: all 60 come up once, in random order, before any repeats
+- Smooth automatic difficulty: names speed up with every correct catch, up to a top speed, with no sudden jumps
+- Fair-play rules: time to read each quote, gaps between falling names, precise hit zones, and no free pause by switching tabs
 - Names that fall vertically at random speeds, with a walking bob for the Bard
 - Streak bonuses and a level system
 - Sound effects for catches, mistakes, level-ups and game over, with a mute button (your choice is remembered)
@@ -166,7 +176,8 @@ Everything lives in `index.html`. Look for these pieces near the top of the scri
   ```
 
 - **`POOL`**: every character name that can fall. The `character` of each quote must also appear here, spelled exactly the same way.
-- **`DIFF`** and **`stage()`**: the speed multiplier of each stage and the number of correct catches that trigger Normal (5) and Hard (12). Tweak these to rebalance the game.
+- **`SPEED_START`**, **`SPEED_STEP`**, **`SPEED_MAXMUL`** and **`SPEED_CAP`**: how the speed multiplier grows with every correct catch, its maximum, and the top speed of any name. Tweak these to rebalance the game. **`GAP`** is the minimum horizontal distance between names that can reach the player at the same time.
+- **`DIFF`** and **`stage()`**: the old Easy/Normal/Hard stages. They no longer affect gameplay and are kept only for compatibility with the `window.__bard` debug hook.
 - **`PLAYS`**: maps alternative play titles (currently Portuguese ones) to the English names shown after a correct catch. The built-in quotes already use English titles, so it only matters if you add entries with other titles. Titles that are not in this map are shown as written.
 - **`SHARE_URL`** and **`shareScore()`**: the link and message used by the share button on the game-over screen.
 - **`FS`**, **`FONT`** and **`textImage()`**: the 5×7 bitmap font. Add a glyph to `FS` (seven rows of five `0`/`1` bits) if you add text with a new symbol.

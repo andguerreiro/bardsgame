@@ -17,11 +17,20 @@ Was it Hamlet or Polonius? Juliet or Portia? Macbeth or Lady Macbeth? You’ll n
 
 You start with **10 lives**. Catch the wrong character, or let the right one hit the floor, and you lose a life.
 
-The game starts gently and gets faster automatically as you make correct catches. There’s no difficulty menu: the challenge progresses through **Easy, Normal and Hard**, with new levels and faster-falling names as you improve.
+The game starts gently and gets faster automatically as you make correct catches. There’s no difficulty menu: names fall a little faster with every correct catch, and a new level arrives every four, all the way up to a top speed that keeps things tough but fair.
 
 Each correct catch earns **10 points**, plus a streak bonus of **2 points per consecutive catch**, up to an extra 20 points. Mistakes and missed catches reset your streak, but your overall level progression never goes backwards.
 
 When your lives run out, the curtain falls. Check your final score, share it with your friends and take another bow!
+
+## Fair play
+
+Hard, but never cheap:
+
+- You always get a moment to read the quote before the right name drops in.
+- Falling names are spaced out, so there’s always a gap you can slip through.
+- A wrong name only costs a life if it actually touches Shakespeare, so a near miss is a miss.
+- There’s no pause button. Switch to another tab or app and the time you were away is replayed when you come back, so there’s no free pause to look up the answer.
 
 ## Controls
 
@@ -38,9 +47,10 @@ The game works on desktop and mobile browsers.
 
 - **60 famous Shakespeare quotes** from *Hamlet*, *Macbeth*, *Romeo and Juliet*, *Julius Caesar*, *King Lear*, *Othello*, *The Tempest*, *Twelfth Night*, *A Midsummer Night’s Dream*, *The Merchant of Venice*, *As You Like It*, *Richard III*, *Henry IV*, *Henry V*, *Antony and Cleopatra* and more
 - **45 characters** to catch or dodge
+- A shuffled deck: every quote comes up once, in random order, before any repeats
 - A complete theatrical pixel-art presentation, with a hand-built bitmap font, a chunky Shakespeare sprite, curtains, a dithered spotlight, masks, hearts and particle effects
 - Names that fall vertically at random speeds
-- Automatic difficulty progression: Easy → Normal → Hard
+- Smooth automatic difficulty: names speed up with every correct catch, up to a top speed
 - Streak bonuses and a level system
 - Sound effects for catches, mistakes, level-ups and game over, with a mute setting that’s remembered
 - Vibration feedback on phones for catches, mistakes, level-ups and game over
